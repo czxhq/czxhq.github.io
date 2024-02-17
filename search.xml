@@ -18,4 +18,23 @@
 <p>More info: <a class="link"   href="https://hexo.io/docs/one-command-deployment.html" >Deployment <i class="fa-regular fa-arrow-up-right-from-square fa-sm"></i></a></p>
 ]]></content>
   </entry>
+  <entry>
+    <title>Math Test</title>
+    <url>/2024/02/17/Math-Test/</url>
+    <content><![CDATA[<pre class="mermaid">  graph TD;
+      A-->B;
+      A-->C;
+      B-->D;
+      C-->D;</pre>
+<p>$$<br>i\hbar\frac{\partial}{\partial t}\psi&#x3D;-\frac{\hbar^2}{2m}\nabla^2\psi+V\psi<br>$$</p>
+]]></content>
+      <categories>
+        <category>math</category>
+        <category>latex</category>
+      </categories>
+      <tags>
+        <tag>test</tag>
+        <tag>blog</tag>
+      </tags>
+  </entry>
 </search>
