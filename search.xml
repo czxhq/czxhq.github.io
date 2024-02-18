@@ -55,8 +55,8 @@
 
 <h2 id="归档"><a href="#归档" class="headerlink" title="归档"></a>归档</h2><p>按照时间线显示所有文章,通过首页侧边栏archives进入或页面顶部导航栏的归档进入</p>
 <h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><p>利用分类你可以快速的知道各个类型的文章有哪些.<br>这里的类型指的是内容的类型, 不是文章的类型,例如: math(数学文章)<br>可通过首页侧边栏categories或顶部导航栏分类界面进入分类界面<br>类型下面可能还有分类型, 点击类型右边的数字(代表有多少个分类型)可以查看分类型<br>点击类型选项卡即可找到对应类型的所有文章</p>
-<h2 id="文章阅读与评论"><a href="#文章阅读与评论" class="headerlink" title="文章阅读与评论"></a>文章阅读与评论</h2><h3 id="文章目录"><a href="#文章目录" class="headerlink" title="文章目录"></a>文章目录</h3><p>位于文章页面右侧, 支持超链接<br>目录可通过文章页面右上侧第一个按钮控制开关闭</p>
-<h3 id="文章评论"><a href="#文章评论" class="headerlink" title="文章评论"></a>文章评论</h3><p>你必须通过github登陆并进行giscus授权才可进行评论.<br>评论部分一般位于文章最底部, 可以通过点击文章页面右上侧第二个按钮(聊天形状)快速进入评论页面</p>
+<h2 id="文章阅读与评论"><a href="#文章阅读与评论" class="headerlink" title="文章阅读与评论"></a>文章阅读与评论</h2><h3 id="文章目录"><a href="#文章目录" class="headerlink" title="文章目录"></a>文章目录</h3><p>位于文章页面右侧, 支持跳转<br>目录可通过文章页面右上侧第一个按钮控制开关闭</p>
+<h3 id="文章评论"><a href="#文章评论" class="headerlink" title="文章评论"></a>文章评论</h3><p>你必须通过github登陆并进行giscus授权才可进行评论.<br>评论部分一般位于文章最底部, 可以通过点击文章页面右上侧第二个按钮(聊天形状)快速进入评论页面<br>评论支持markdown语法</p>
 <h2 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h2><p>位于页面右上放大镜图标, 仅支持查找文章, 不支持搜索引擎</p>
 <h2 id="页面设置"><a href="#页面设置" class="headerlink" title="页面设置"></a>页面设置</h2><p>位于页面右下齿轮图标, 支持:</p>
 <ol>
@@ -64,6 +64,29 @@
 <li>调整白天模式或黑夜模式</li>
 <li>快速到底</li>
 </ol>
+<p>#网站内容与计划<br>目前, 除了一些可能发布的日常知识博客, 我打算发布一系列专栏(若为大学课内课程, 则以北航课程标准为准), 大概的分类树如下图:</p>
+<pre class="mermaid">graph LR;
+专栏 --- 数学-math --- 初等数论
+专栏 --- 计算机-computer --- 计算机组成原理
+专栏 --- 物理-physics ---力学
+数学-math --- 离散数学-discrete_mathematics --- 数理逻辑
+离散数学-discrete_mathematics --- 集合论
+离散数学-discrete_mathematics --- 关系与函数
+离散数学-discrete_mathematics --- 图论
+离散数学-discrete_mathematics --- 群论
+离散数学-discrete_mathematics --- 组合数学
+计算机-computer --- 操作系统
+计算机-computer --- 算法
+数学-math --- 数学分析
+数学-math --- 线性代数
+数学-math --- 复变函数与积分变换
+数学-math --- 概率论
+物理-physics --- 电磁学
+物理-physics --- 近代物理
+物理-physics --- 热光近</pre>
+
+<p>这棵树看起来非常庞大, 是吧 :stuck_out_tongue_closed_eyes: 我当然不打算一学期全部发布完, 目前的计划先发布离散数学数理逻辑部分和组合数学部分, 物理力学部分,  数学分析下册部分, 初等数论部分.我尽量有时间就写 :upside_down_face:</p>
+<h1 id="别的说明"><a href="#别的说明" class="headerlink" title="别的说明"></a>别的说明</h1><h2 id="设备"><a href="#设备" class="headerlink" title="设备"></a>设备</h2><p>支持电脑, 手机, 和平板</p>
 ]]></content>
       <categories>
         <category>announcement</category>
