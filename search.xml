@@ -37,4 +37,27 @@
         <tag>blog</tag>
       </tags>
   </entry>
+  <entry>
+    <title>README</title>
+    <url>/2024/02/18/README/</url>
+    <content><![CDATA[<h1 id="网站功能说明"><a href="#网站功能说明" class="headerlink" title="网站功能说明"></a>网站功能说明</h1><h2 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h2><p>利用标签你可以快速的知道各个类型的文章有哪些.<br>这里的类型指的是文章的类型,不是内容的类型,例如: test(测试文章), blog(博客文章)<br>你可以通过首页侧边栏的tags进入标签页面,也可以通过首页顶部导航栏中的标签进入标签页面<br>点击标签选项卡即可找到对应标签的所有文章</p>
+
+  <div class="note-large red">
+    <div class="notel-title rounded-t-lg p-3 font-bold text-lg flex flex-row gap-2 items-center">
+      <p>注意</p>
+
+    </div>
+    <div class="notel-content">
+      <p>标签页面的类型被设置为blur,在鼠标未靠近标签选项卡时表现为模糊,只需要将鼠标靠近标签选项卡即可</p>
+
+    </div>
+  </div>
+]]></content>
+      <categories>
+        <category>announcement</category>
+      </categories>
+      <tags>
+        <tag>announcement</tag>
+      </tags>
+  </entry>
 </search>
