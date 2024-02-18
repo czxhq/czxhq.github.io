@@ -52,6 +52,18 @@
 
     </div>
   </div>
+
+<h2 id="归档"><a href="#归档" class="headerlink" title="归档"></a>归档</h2><p>按照时间线显示所有文章,通过首页侧边栏archives进入或页面顶部导航栏的归档进入</p>
+<h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><p>利用分类你可以快速的知道各个类型的文章有哪些.<br>这里的类型指的是内容的类型, 不是文章的类型,例如: math(数学文章)<br>可通过首页侧边栏categories或顶部导航栏分类界面进入分类界面<br>类型下面可能还有分类型, 点击类型右边的数字(代表有多少个分类型)可以查看分类型<br>点击类型选项卡即可找到对应类型的所有文章</p>
+<h2 id="文章阅读与评论"><a href="#文章阅读与评论" class="headerlink" title="文章阅读与评论"></a>文章阅读与评论</h2><h3 id="文章目录"><a href="#文章目录" class="headerlink" title="文章目录"></a>文章目录</h3><p>位于文章页面右侧, 支持超链接<br>目录可通过文章页面右上侧第一个按钮控制开关闭</p>
+<h3 id="文章评论"><a href="#文章评论" class="headerlink" title="文章评论"></a>文章评论</h3><p>你必须通过github登陆并进行giscus授权才可进行评论.<br>评论部分一般位于文章最底部, 可以通过点击文章页面右上侧第二个按钮(聊天形状)快速进入评论页面</p>
+<h2 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h2><p>位于页面右上放大镜图标, 仅支持查找文章, 不支持搜索引擎</p>
+<h2 id="页面设置"><a href="#页面设置" class="headerlink" title="页面设置"></a>页面设置</h2><p>位于页面右下齿轮图标, 支持:</p>
+<ol>
+<li>字体的大小调整</li>
+<li>调整白天模式或黑夜模式</li>
+<li>快速到底</li>
+</ol>
 ]]></content>
       <categories>
         <category>announcement</category>
