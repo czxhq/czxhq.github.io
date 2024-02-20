@@ -22,7 +22,7 @@
   <entry>
     <title>README</title>
     <url>/2024/02/18/README/</url>
-    <content><![CDATA[<h1 id="网站功能说明"><a href="#网站功能说明" class="headerlink" title="网站功能说明"></a>网站功能说明</h1><h2 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h2><p>利用标签你可以快速的知道各个类型的文章有哪些.<br>这里的类型指的是文章的类型,不是内容的类型,例如: test(测试文章), blog(博客文章)<br>你可以通过首页侧边栏的tags进入标签页面,也可以通过首页顶部导航栏中的标签进入标签页面<br>点击标签选项卡即可找到对应标签的所有文章</p>
+    <content><![CDATA[<h1 id="网站功能说明"><a href="#网站功能说明" class="headerlink" title="网站功能说明"></a>网站功能说明</h1><h2 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h2><p>利用标签你可以快速的知道各个类型的文章有哪些.<br>这里的类型指的是文章的类型,不是内容的类型,例如: test(测试文章), blog(博客文章)<br>当然可能会有一些特殊标签<br>你可以通过首页侧边栏的tags进入标签页面,也可以通过首页顶部导航栏中的标签进入标签页面<br>点击标签选项卡即可找到对应标签的所有文章</p>
 
   <div class="note-large red">
     <div class="notel-title rounded-t-lg p-3 font-bold text-lg flex flex-row gap-2 items-center">
@@ -38,7 +38,7 @@
 <h2 id="归档"><a href="#归档" class="headerlink" title="归档"></a>归档</h2><p>按照时间线显示所有文章,通过首页侧边栏archives进入或页面顶部导航栏的归档进入</p>
 <h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><p>利用分类你可以快速的知道各个类型的文章有哪些.<br>这里的类型指的是内容的类型, 不是文章的类型,例如: math(数学文章)<br>可通过首页侧边栏categories或顶部导航栏分类界面进入分类界面<br>类型下面可能还有分类型, 点击类型右边的数字(代表有多少个分类型)可以查看分类型<br>点击类型选项卡即可找到对应类型的所有文章</p>
 <h2 id="文章阅读与评论"><a href="#文章阅读与评论" class="headerlink" title="文章阅读与评论"></a>文章阅读与评论</h2><h3 id="文章目录"><a href="#文章目录" class="headerlink" title="文章目录"></a>文章目录</h3><p>位于文章页面右侧, 支持跳转<br>目录可通过文章页面右上侧第一个按钮控制开关闭</p>
-<h3 id="文章评论"><a href="#文章评论" class="headerlink" title="文章评论"></a>文章评论</h3><p>你必须通过github登陆并进行giscus授权才可进行评论.<br>评论部分一般位于文章最底部, 可以通过点击文章页面右上侧第二个按钮(聊天形状)快速进入评论页面<br>评论支持markdown语法</p>
+<h3 id="文章评论"><a href="#文章评论" class="headerlink" title="文章评论"></a>文章评论</h3><p>你必须通过github登陆并进行giscus授权才可进行评论.<br>评论部分一般位于文章最底部, 可以通过点击文章页面右上侧第二个按钮(聊天形状)快速进入评论页面<br>评论支持markdown语法<br>如果你发现了文章的问题, 或是不解的地方, 欢迎发在评论区讨论</p>
 <h2 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h2><p>位于页面右上放大镜图标, 仅支持查找文章, 不支持搜索引擎</p>
 <h2 id="页面设置"><a href="#页面设置" class="headerlink" title="页面设置"></a>页面设置</h2><p>位于页面右下齿轮图标, 支持:</p>
 <ol>
@@ -67,8 +67,9 @@
 物理-physics --- 狭义相对论
 物理-physics --- 热光近</pre>
 
-<p>这棵树看起来非常庞大, 是吧.我当然不打算一学期全部发布完, 目前的计划先发布离散数学数理逻辑部分和组合数学部分, 物理力学部分,  数学分析下册部分, 初等数论部分.我尽量有时间就写</p>
-<h1 id="别的说明"><a href="#别的说明" class="headerlink" title="别的说明"></a>别的说明</h1><h2 id="设备"><a href="#设备" class="headerlink" title="设备"></a>设备</h2><p>支持电脑, 手机, 和平板</p>
+<p>这也只是一部分, 将来可能还会扩充, 那将是网站的最终计划.制作这些专栏的初衷, 是为了让大家能够更好的自学这些科目, 这些专栏文章力求在简短的篇幅把重点和易错点全部说清楚, 大部分文章会配以循序渐进的题目让大家巩固知识.如果你是北航的学生, 那么你还能从这里获取一些有关北航课程安排和考试有关信息.<br>目前可能的计划: 初等数论, 数理逻辑, 组合数学, 数学分析, 物理, 操作系统在其中挑</p>
+<h1 id="别的说明"><a href="#别的说明" class="headerlink" title="别的说明"></a>别的说明</h1><h2 id="设备"><a href="#设备" class="headerlink" title="设备"></a>设备</h2><p>支持电脑, 手机, 和平板<br>手机和平板可能出现页面不匹配的情况</p>
+<h2 id="网站加载速度问题"><a href="#网站加载速度问题" class="headerlink" title="网站加载速度问题"></a>网站加载速度问题</h2><p>网站没有搞cdn加速, 加载可能较慢.<br>网站设置了预加载和懒加载, 一般在一个更新周期内首次加载可能较慢, 之后几次较快<br>用Watt toolkit(steam++) 加速可以提升网站加载速度</p>
 ]]></content>
       <categories>
         <category>announcement</category>
