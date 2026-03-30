@@ -1,0 +1,44 @@
+# a
+b**b*****b***
+
+%%fold
+aa
+%%
+
+%%warning
+a
+%%
+
+$$i\hbar\frac{\partial}{\partial t}\Psi(\mathbf{r},t)=\left[-\frac{\hbar^2}{2m}\nabla^2+V(\mathbf{r},t)\right]\Psi(\mathbf{r},t)$$
+
+### 1. 基础表格 (默认对齐)
+
+| 姓名 | 年龄 | 职业 |
+| --- | --- | --- |
+| 张三 | 25 | 前端工程师 |
+| 李四 | 30 | 后端开发 |
+| 王五 | 28 | 产品经理 |
+
+### 2. 包含对齐方式与行内格式的表格
+
+| 功能特性 (左对齐) | 描述说明 (居中对齐) | 开发状态 (右对齐) |
+| :--- | :---: | ---: |
+| **代码高亮** | 支持主流语言的语法高亮 | *已完成* |
+| `Markdown` 扩展 | 兼容并拓展标准 Markdown | 测试中 |
+| 实时预览 | `Ctrl+S` 保存并实时渲染 | 待开发 |
+| LaTeX 公式 | 完美解析 `$` 和 `$$` 语法 | **已完成** |
+
+### 3. 复杂内容表格 (内容包含特殊字符)
+
+| 快捷键 | 动作 | 备注 |
+| :--- | :--- | :--- |
+| `Ctrl + C` | ==复制== | 测试管道符 `\|` 转义是否正常 |
+| `Ctrl + V` | 粘贴 | 测试 `<br>` 标签是否<br>能正常换行 |
+
+```python
+import os
+```
+<video controls src="assets/media-1773837642310.mp4" title="屏幕录制 2025-01-02 214517.mp4" style="width: 100%;">
+  Your browser does not support the video tag.
+</video>
+

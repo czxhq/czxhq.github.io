@@ -1,0 +1,153 @@
+{
+  "site": {
+    "title": "竹林书斋",
+    "subtitle": "竹林中的个人知识园林 / 技术博客 / 隐士感笔记站",
+    "description": "记录技术、思考与日常积累的个人博客。"
+  },
+  "author": {
+    "name": "书斋主人",
+    "bio": "静居竹林，专注于前端开发、知识管理与系统设计。",
+    "email": "example@example.com",
+    "avatar": "",
+    "socialLinks": [
+      {
+        "label": "GitHub",
+        "url": "https://github.com"
+      },
+      {
+        "label": "Email",
+        "url": "mailto:example@example.com"
+      }
+    ]
+  },
+  "navigation": {
+    "searchButtonTitle": "搜索文章",
+    "menuButtonLabel": "切换导航菜单",
+    "items": [
+      {
+        "label": "首页",
+        "to": "/",
+        "showInHeader": true,
+        "showInMobile": true
+      },
+      {
+        "label": "分类",
+        "to": "/categories",
+        "showInHeader": true,
+        "showInMobile": true
+      },
+      {
+        "label": "标签",
+        "to": "/tags",
+        "showInHeader": true,
+        "showInMobile": true
+      },
+      {
+        "label": "归档",
+        "to": "/archive",
+        "showInHeader": true,
+        "showInMobile": true
+      },
+      {
+        "label": "关于",
+        "to": "/about",
+        "showInHeader": true,
+        "showInMobile": true
+      },
+      {
+        "label": "搜索",
+        "to": "/search",
+        "showInHeader": false,
+        "showInMobile": true
+      }
+    ]
+  },
+  "home": {
+    "hero": {
+      "title": "竹林书斋",
+      "subtitle": "竹林中的个人知识园林 / 技术博客 / 隐士感笔记站",
+      "actions": [
+        {
+          "label": "查看文章",
+          "to": "/archive",
+          "variant": "primary"
+        },
+        {
+          "label": "了解我",
+          "to": "/about",
+          "variant": "secondary"
+        }
+      ]
+    },
+    "authorCardTitle": "书斋主人",
+    "featuredTitle": "精选文章",
+    "latestTitle": "最新文章",
+    "continueReadingTitle": "继续阅读",
+    "categoriesTitle": "分类专栏",
+    "tagsTitle": "常用标签"
+  },
+  "about": {
+    "title": "关于",
+    "description": "这里记录站点主人的方向、经历与长期关注的话题。",
+    "contentFile": "pages/about.md",
+    "skills": [
+      "JavaScript / TypeScript",
+      "Vue.js Ecosystem",
+      "Node.js",
+      "Electron"
+    ]
+  },
+  "categories": {
+    "title": "分类",
+    "descriptionTemplate": "层级目录树结构，共 {count} 篇文章",
+    "clearLabel": "清除筛选",
+    "emptyTitle": "卷帙浩繁，请择一径",
+    "emptyDescription": "在左侧目录树中选择感兴趣的分类，即可浏览相关文章集锦。"
+  },
+  "tags": {
+    "title": "标签",
+    "descriptionTemplate": "共 {tagCount} 个标签，{postCount} 篇文章",
+    "clearLabel": "清除筛选"
+  },
+  "archive": {
+    "title": "归档",
+    "descriptionTemplate": "共 {count} 篇笔记归档"
+  },
+  "search": {
+    "title": "搜索文章",
+    "description": "支持标题、分类、标签、摘要和正文内容的本地搜索。",
+    "placeholder": "输入关键词，例如 Vue、测试、Markdown",
+    "submitLabel": "搜索",
+    "startTitle": "开始搜索",
+    "startDescription": "输入关键词后，页面会立即从本地文章索引里查找匹配内容。",
+    "resultTitleTemplate": "“{keyword}” 的搜索结果",
+    "resultCountTemplate": "共 {count} 篇",
+    "emptyTitle": "没有找到结果",
+    "emptyDescription": "可以换一个关键词，或者试试分类、标签、标题中的核心词。",
+    "uncategorizedLabel": "未分类",
+    "undatedLabel": "无日期",
+    "noSummaryLabel": "暂无摘要。"
+  },
+  "post": {
+    "tocTitle": "目录",
+    "backToTopTitle": "返回顶部",
+    "copyLinkTitle": "复制链接",
+    "publishedLabel": "发布于",
+    "updatedLabel": "更新于",
+    "previousLabel": "上一篇",
+    "nextLabel": "下一篇",
+    "previousEmptyLabel": "已经是最新的一篇了",
+    "nextEmptyLabel": "已经是最后一篇了",
+    "loadFailedMessage": "内容加载失败，请重试。",
+    "copySuccessMessage": "链接已复制到剪贴板。"
+  },
+  "notFound": {
+    "title": "山深林密，迷失方向",
+    "description": "您要寻找的页面似乎已经随晨雾消散，亦或是从未存在。",
+    "actionLabel": "返回书斋大门"
+  },
+  "footer": {
+    "copyrightName": "竹林书斋",
+    "poweredBy": "Powered by Vue + Vite + GitHub Pages"
+  }
+}

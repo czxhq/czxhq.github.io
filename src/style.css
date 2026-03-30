@@ -1,0 +1,202 @@
+﻿:root {
+  --primary: #5c7a3a;
+  --primary-dark: #314127;
+  --accent: #a67c52;
+  --accent-alt: #7c9a56;
+  --bg-color: #f7f4ec;
+  --bg-secondary: rgba(239, 232, 216, 0.78);
+  --text-color: #2f362a;
+  --text-muted: #4a5642;
+  --card-bg: rgba(250, 247, 240, 0.84);
+  --glass-border: rgba(92, 122, 58, 0.22);
+  --surface: rgba(244, 239, 227, 0.82);
+  --shadow-sm: 0 8px 18px rgba(82, 92, 62, 0.08);
+  --shadow-md: 0 14px 32px rgba(82, 92, 62, 0.12);
+  --paper-grain: radial-gradient(
+      circle at 20% 20%,
+      rgba(255, 255, 255, 0.45) 0,
+      transparent 24%
+    ),
+    radial-gradient(
+      circle at 80% 12%,
+      rgba(232, 239, 227, 0.5) 0,
+      transparent 22%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 252, 246, 0.82),
+      rgba(243, 238, 226, 0.88)
+    );
+
+  /* Replace these three variables with your own cursor assets later */
+  --cursor-default: url("/cursors/cursor-start.png") 4 4, default;
+  --cursor-pointer: url("/cursors/cursor2.png") 23 6, pointer;
+  --cursor-text: text;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary: #8fa96e;
+    --primary-dark: #d7e2c6;
+    --accent: #c19a6b;
+    --accent-alt: #9cb77d;
+    --bg-color: #1e241d;
+    --bg-secondary: rgba(40, 48, 36, 0.82);
+    --text-color: #d9dfd1;
+    --text-muted: #a9b49d;
+    --card-bg: rgba(39, 47, 34, 0.84);
+    --glass-border: rgba(143, 169, 110, 0.22);
+    --surface: rgba(46, 55, 40, 0.82);
+    --shadow-sm: 0 8px 18px rgba(0, 0, 0, 0.26);
+    --shadow-md: 0 14px 32px rgba(0, 0, 0, 0.34);
+    --paper-grain: radial-gradient(
+        circle at 20% 20%,
+        rgba(143, 169, 110, 0.08) 0,
+        transparent 24%
+      ),
+      radial-gradient(
+        circle at 80% 12%,
+        rgba(193, 154, 107, 0.08) 0,
+        transparent 22%
+      ),
+      linear-gradient(180deg, rgba(33, 40, 30, 0.92), rgba(25, 31, 23, 0.94));
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg-color);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+  background-image: var(--paper-grain);
+  color: var(--text-color);
+  font-family: "Inter", system-ui, -apple-system, "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  line-height: 1.6;
+  cursor: var(--cursor-default) !important;
+}
+
+/* Make every element inherit the global cursor by default. */
+body *,
+body *::before,
+body *::after {
+  cursor: inherit;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+.glass-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(92, 122, 58, 0.3);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary), var(--accent-alt));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Clickable areas and everything inside them must use the same pointer cursor. */
+a,
+a *,
+button,
+button *,
+[role="button"],
+[role="button"] *,
+[tabindex]:not([tabindex="-1"]),
+[tabindex]:not([tabindex="-1"]) *,
+summary,
+summary *,
+label[for],
+label[for] *,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="checkbox"],
+input[type="radio"],
+.tag,
+.tag *,
+.widget-list li,
+.widget-list li *,
+.post-card,
+.post-card *,
+.post-list-item,
+.post-list-item *,
+.top-cat-card,
+.top-cat-card *,
+.action-btn,
+.action-btn *,
+.social-link,
+.social-link *,
+.post-item,
+.post-item *,
+.month-posts li,
+.month-posts li *,
+.year-list li,
+.year-list li * {
+  cursor: var(--cursor-pointer) !important;
+}
+
+/* Text entry areas should always win over inherited pointer/default cursors. */
+input:not([type="button"]):not([type="submit"]):not([type="reset"]):not(
+    [type="checkbox"]
+  ):not([type="radio"]),
+textarea,
+select,
+[contenteditable="true"],
+input:not([type="button"]):not([type="submit"]):not([type="reset"]):not(
+    [type="checkbox"]
+  ):not([type="radio"])
+  *,
+textarea *,
+select *,
+[contenteditable="true"] * {
+  cursor: var(--cursor-text) !important;
+}
+
+:disabled,
+:disabled *,
+[aria-disabled="true"],
+[aria-disabled="true"] * {
+  cursor: not-allowed !important;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--glass-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-alt);
+}
