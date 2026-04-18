@@ -59,7 +59,7 @@ import { useRoute, useRouter } from 'vue-router'
 import postsData from '../data/posts.json'
 import { renderMarkdownHtml } from '../utils/markdown-renderer'
 import { extractOutline } from '../utils/outline'
-import { siteConfig } from '../config/site-config'
+import { formatTemplate, siteConfig, updateDocumentMetadata } from '../config/site-config'
 import { withBase } from '../utils/base-url'
 
 const route = useRoute()
@@ -80,10 +80,18 @@ async function loadPost() {
   const slug = route.params.slug
   const found = postsData.find(p => p.slug === slug)
   if (!found) {
+    updateDocumentMetadata({
+      title: siteConfig.notFound.pageTitle,
+      description: siteConfig.notFound.description
+    })
     router.push('/404')
     return
   }
   post.value = found
+  updateDocumentMetadata({
+    title: formatTemplate(siteConfig.post.pageTitleTemplate, { title: found.title }),
+    description: found.summary || siteConfig.site.metadata.defaultDescription
+  })
   try {
     const res = await fetch(withBase(found.source))
     if (!res.ok) throw new Error('Not found source file')

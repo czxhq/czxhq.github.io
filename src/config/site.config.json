@@ -2,7 +2,23 @@
   "site": {
     "title": "竹林书斋",
     "subtitle": "竹林中的个人知识园林 / 技术博客 / 隐士感笔记站",
-    "description": "记录技术、思考与日常积累的个人博客。"
+    "description": "记录技术、思考与日常积累的个人博客。",
+    "metadata": {
+      "defaultTitle": "竹林书斋",
+      "titleTemplate": "{page} - 竹林书斋",
+      "defaultDescription": "记录技术、思考与日常积累的个人博客。",
+      "keywords": [
+        "竹林书斋",
+        "技术博客",
+        "知识管理",
+        "前端开发",
+        "Markdown",
+        "KMD"
+      ],
+      "author": "书斋主人",
+      "themeColor": "#f7f4ec",
+      "favicon": "/favicon.svg"
+    }
   },
   "author": {
     "name": "书斋主人",
@@ -84,7 +100,8 @@
     "latestTitle": "最新文章",
     "continueReadingTitle": "继续阅读",
     "categoriesTitle": "分类专栏",
-    "tagsTitle": "常用标签"
+    "tagsTitle": "常用标签",
+    "pageTitle": "首页"
   },
   "about": {
     "title": "关于",
@@ -95,23 +112,27 @@
       "Vue.js Ecosystem",
       "Node.js",
       "Electron"
-    ]
+    ],
+    "pageTitle": "关于"
   },
   "categories": {
     "title": "分类",
     "descriptionTemplate": "层级目录树结构，共 {count} 篇文章",
     "clearLabel": "清除筛选",
     "emptyTitle": "卷帙浩繁，请择一径",
-    "emptyDescription": "在左侧目录树中选择感兴趣的分类，即可浏览相关文章集锦。"
+    "emptyDescription": "在左侧目录树中选择感兴趣的分类，即可浏览相关文章集锦。",
+    "pageTitle": "分类"
   },
   "tags": {
     "title": "标签",
     "descriptionTemplate": "共 {tagCount} 个标签，{postCount} 篇文章",
-    "clearLabel": "清除筛选"
+    "clearLabel": "清除筛选",
+    "pageTitle": "标签"
   },
   "archive": {
     "title": "归档",
-    "descriptionTemplate": "共 {count} 篇笔记归档"
+    "descriptionTemplate": "共 {count} 篇笔记归档",
+    "pageTitle": "归档"
   },
   "search": {
     "title": "搜索文章",
@@ -126,7 +147,8 @@
     "emptyDescription": "可以换一个关键词，或者试试分类、标签、标题中的核心词。",
     "uncategorizedLabel": "未分类",
     "undatedLabel": "无日期",
-    "noSummaryLabel": "暂无摘要。"
+    "noSummaryLabel": "暂无摘要。",
+    "pageTitle": "搜索"
   },
   "post": {
     "tocTitle": "目录",
@@ -139,12 +161,14 @@
     "previousEmptyLabel": "已经是最新的一篇了",
     "nextEmptyLabel": "已经是最后一篇了",
     "loadFailedMessage": "内容加载失败，请重试。",
-    "copySuccessMessage": "链接已复制到剪贴板。"
+    "copySuccessMessage": "链接已复制到剪贴板。",
+    "pageTitleTemplate": "{title} - 竹林书斋"
   },
   "notFound": {
     "title": "山深林密，迷失方向",
     "description": "您要寻找的页面似乎已经随晨雾消散，亦或是从未存在。",
-    "actionLabel": "返回书斋大门"
+    "actionLabel": "返回书斋大门",
+    "pageTitle": "页面未找到"
   },
   "footer": {
     "copyrightName": "竹林书斋",
