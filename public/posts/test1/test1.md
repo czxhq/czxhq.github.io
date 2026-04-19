@@ -27,3 +27,11 @@ format: "md"
 ##### test1
 
 ###### test1
+
+%%definition {id="definition-id" title="定义 1"}
+v
+%%
+
+[[definition-id|定义 1]]
+
+[[test2#3|定理 12]]

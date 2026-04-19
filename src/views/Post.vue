@@ -33,6 +33,16 @@
         class="post-content markdown-body"
         v-html="htmlContent"
         @click="handleContentClick"
+        @mouseover="handleReferenceHover"
+        @mousemove="moveReferencePreview"
+        @mouseleave="hideReferencePreview"
+      ></div>
+
+      <div
+        v-if="referencePreview.visible"
+        class="reference-preview markdown-body"
+        :style="{ left: `${referencePreview.x}px`, top: `${referencePreview.y}px` }"
+        v-html="referencePreview.html"
       ></div>
 
       <footer class="post-footer">
@@ -54,13 +64,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch, onUnmounted } from 'vue'
+import { ref, onMounted, computed, watch, onUnmounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import postsData from '../data/posts.json'
+import referenceIndex from '../data/reference-index.json'
 import { renderMarkdownHtml } from '../utils/markdown-renderer'
 import { extractOutline } from '../utils/outline'
 import { formatTemplate, siteConfig, updateDocumentMetadata } from '../config/site-config'
 import { withBase } from '../utils/base-url'
+import { extractReferenceTargetsFromMarkdown } from '../utils/reference'
 
 const route = useRoute()
 const router = useRouter()
@@ -70,6 +82,13 @@ const htmlContent = ref('')
 const outline = ref([])
 const activeSlug = ref('')
 const contentRef = ref(null)
+const currentReferences = ref([])
+const referencePreview = ref({
+  visible: false,
+  html: '',
+  x: 0,
+  y: 0
+})
 
 const visiblePosts = postsData.filter(p => !p.draft)
 const currentIndex = computed(() => visiblePosts.findIndex(p => p.slug === route.params.slug))
@@ -102,6 +121,12 @@ async function loadPost() {
 
     htmlContent.value = renderMarkdownHtml(rawMarkdown, found.source)
     outline.value = extractOutline(rawMarkdown)
+    currentReferences.value = extractReferenceTargetsFromMarkdown(rawMarkdown, {
+      post: found.slug,
+      path: found.source
+    })
+    await nextTick()
+    hydrateReferenceLabels()
   } catch (e) {
     console.error('Failed to load markdown', e)
     htmlContent.value = `<p>${siteConfig.post.loadFailedMessage}</p>`
@@ -154,7 +179,37 @@ function scrollTo(slug, event) {
 }
 
 function handleContentClick(event) {
-  const anchor = event.target instanceof Element ? event.target.closest('a[href^="#"]') : null
+  const clickedElement = event.target instanceof Element ? event.target : null
+  const referenceAnchor = clickedElement ? clickedElement.closest('a.reference-link') : null
+  if (referenceAnchor) {
+    event.preventDefault()
+    const target = resolveReferenceTarget(referenceAnchor)
+    if (!target) return
+    if (target.duplicate) {
+      console.warn(`Duplicate reference id "${target.id}" in post "${target.slug || post.value?.slug}". Jumping to the first matching block.`)
+    }
+
+    if (!target.slug || target.slug === post.value?.slug) {
+      const el = document.getElementById(target.anchor)
+      if (el) {
+        const y = el.getBoundingClientRect().top + window.scrollY - 80
+        window.scrollTo({ top: y })
+      }
+    } else {
+      router.push(`/post/${target.slug}`).then(() => {
+        setTimeout(() => {
+          const el = document.getElementById(target.anchor)
+          if (el) {
+            const y = el.getBoundingClientRect().top + window.scrollY - 80
+            window.scrollTo({ top: y })
+          }
+        }, 60)
+      })
+    }
+    return
+  }
+
+  const anchor = clickedElement ? clickedElement.closest('a[href^="#"]') : null
   if (!anchor) return
 
   const href = anchor.getAttribute('href') || ''
@@ -162,6 +217,76 @@ function handleContentClick(event) {
   if (!slug) return
 
   scrollTo(slug, event)
+}
+
+function resolveReferenceTarget(anchor) {
+  const referenceId = anchor.dataset.referenceId || ''
+  const referencePost = anchor.dataset.referencePost || ''
+
+  if (!referenceId) return null
+
+  if (!referencePost) {
+    return currentReferences.value.find((target) => target.id === referenceId) || null
+  }
+
+  return referenceIndex.find(
+    (target) => target.id === referenceId && target.slug === referencePost
+  ) || null
+}
+
+function handleReferenceHover(event) {
+  const anchor = event.target instanceof Element ? event.target.closest('a.reference-link') : null
+  if (!anchor) {
+    hideReferencePreview()
+    return
+  }
+
+  const target = resolveReferenceTarget(anchor)
+  if (!target) {
+    hideReferencePreview()
+    return
+  }
+
+  referencePreview.value = {
+    visible: true,
+    html: `<div class="reference-preview-head"><span class="reference-preview-type">${escapePreviewHtml(target.type)}</span><strong>${escapePreviewHtml(target.title)}</strong></div>${renderMarkdownHtml(target.content || '*No preview available.*', target.source || post.value?.source || '')}`,
+    x: event.clientX + 18,
+    y: event.clientY + 18
+  }
+}
+
+function moveReferencePreview(event) {
+  if (!referencePreview.value.visible) return
+  referencePreview.value.x = event.clientX + 18
+  referencePreview.value.y = event.clientY + 18
+}
+
+function hideReferencePreview() {
+  referencePreview.value.visible = false
+}
+
+function hydrateReferenceLabels() {
+  const anchors = contentRef.value?.querySelectorAll('a.reference-link[data-reference-implicit-label="true"]')
+  if (!anchors) return
+
+  anchors.forEach((node) => {
+    const anchor = node
+    const target = resolveReferenceTarget(anchor)
+    if (target) {
+      if (target.duplicate) {
+        anchor.title = `重复引用 id：${target.id}，当前默认指向第一个同 id 块`
+      }
+      anchor.textContent = target.title
+    }
+  })
+}
+
+function escapePreviewHtml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
 }
 
 function copyLink() {
@@ -351,6 +476,37 @@ function backToTop() {
   margin-bottom: 60px;
 }
 
+.reference-preview {
+  position: fixed;
+  z-index: 30;
+  width: min(420px, 40vw);
+  max-height: 320px;
+  overflow: auto;
+  pointer-events: none;
+  padding: 16px 18px;
+  background: rgba(247, 244, 236, 0.98);
+  border: 1px solid rgba(92, 122, 58, 0.16);
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(58, 72, 34, 0.14);
+}
+
+.reference-preview :deep(.reference-preview-head) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.reference-preview :deep(.reference-preview-type) {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(92, 122, 58, 0.14);
+  color: var(--primary-dark);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
 ::v-deep(.markdown-body) {
   background: transparent !important;
   color: var(--text-color) !important;
@@ -366,6 +522,26 @@ function backToTop() {
 
 ::v-deep(.markdown-body a) {
   color: var(--primary) !important;
+}
+
+::v-deep(.reference-link) {
+  color: var(--primary-dark) !important;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+}
+
+::v-deep(.callout-ref-duplicate) {
+  border-color: rgba(180, 116, 32, 0.7) !important;
+  box-shadow: 0 0 0 1px rgba(180, 116, 32, 0.14), 0 12px 32px rgba(80, 58, 22, 0.08);
+}
+
+::v-deep(.callout-ref-warning) {
+  margin-left: auto;
+  border-radius: 999px;
+  padding: 2px 8px;
+  background: rgba(180, 116, 32, 0.14);
+  color: #8a5a1f;
+  font-size: 12px;
 }
 
 .post-footer {

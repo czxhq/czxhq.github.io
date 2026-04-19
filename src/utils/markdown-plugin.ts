@@ -1,13 +1,22 @@
-import { extractOutline } from './outline'
+﻿import { extractOutline } from './outline'
+import {
+  buildReferenceAnchorId,
+  isReferenceableCalloutType,
+  parseCalloutMetadata,
+  parseInlineReferencePayload
+} from './reference'
 
 const CALLOUT_CONFIG: Record<string, { title: string; icon: string }> = {
-  note: { title: 'Note', icon: '📝' },
-  warning: { title: 'Warning', icon: '⚠️' },
-  tip: { title: 'Tip', icon: '💡' },
-  important: { title: 'Important', icon: '💎' },
-  caution: { title: 'Caution', icon: '🔥' },
-  example: { title: 'Example', icon: '🚀' },
-  fold: { title: 'Folded Content', icon: '➡️' }
+  note: { title: 'Note', icon: '馃摑' },
+  warning: { title: 'Warning', icon: '鈿狅笍' },
+  tip: { title: 'Tip', icon: '馃挕' },
+  important: { title: 'Important', icon: '馃拵' },
+  caution: { title: 'Caution', icon: '馃敟' },
+  example: { title: 'Example', icon: '馃殌' },
+  fold: { title: 'Folded Content', icon: '鉃★笍' },
+  lemma: { title: '引理', icon: '∵' },
+  definition: { title: '定义', icon: '≝' },
+  theorem: { title: '定理', icon: '∴' }
 }
 
 function parseMetadata(str: string): Record<string, any> {
@@ -27,7 +36,7 @@ function parseMetadata(str: string): Record<string, any> {
   } catch (e) {
     try {
       // Support attribute-style syntax:
-      // {title="Custom", icon="🍃"} or {title:'Custom'} or {title=Custom}
+      // {title="Custom", icon="馃崈"} or {title:'Custom'} or {title=Custom}
       const body = trimmed.replace(/^\{\s*|\s*\}$/g, '')
       if (!body) return {}
 
@@ -129,9 +138,9 @@ export function calloutPlugin(md: any) {
 
     const type = match[1].toLowerCase()
     const metadataRaw = match[2] || '{}'
-    const metadata = parseMetadata(metadataRaw)
+    const metadata = parseCalloutMetadata(metadataRaw)
     
-    const config = CALLOUT_CONFIG[type] || { title: type.charAt(0).toUpperCase() + type.slice(1), icon: '📌' }
+    const config = CALLOUT_CONFIG[type] || { title: type.charAt(0).toUpperCase() + type.slice(1), icon: '馃搶' }
     const title = metadata.title || config.title
     const icon = metadata.icon || config.icon
 
@@ -169,13 +178,26 @@ export function calloutPlugin(md: any) {
     token.map = [startLine, nextLine]
     token.attrs = [['class', `callout callout-${type}`]]
 
+    if (isReferenceableCalloutType(type) && typeof metadata.id === 'string' && metadata.id.trim()) {
+      const referenceId = metadata.id.trim()
+      const duplicateInfo = getDuplicateInfo(state.env, referenceId)
+      token.attrs.push(['id', buildReferenceAnchorId(referenceId)])
+      token.attrs.push(['data-ref-id', referenceId])
+      token.attrs.push(['data-ref-type', type])
+      token.attrs.push(['data-ref-title', title])
+      if (duplicateInfo?.duplicate) {
+        token.attrs[0][1] += ' callout-ref-duplicate'
+        token.attrs.push(['data-ref-duplicate', 'true'])
+      }
+    }
+
     // Render Callout Header
     if (type === 'fold') {
       token = state.push('summary_open', 'summary', 1)
       token.attrs = [['class', 'callout-header']]
       
       token = state.push('html_inline', '', 0)
-      token.content = `<span class="callout-icon">${icon}</span><span class="callout-title">${title}</span>`
+      token.content = `<span class="callout-icon">${icon}</span><span class="callout-title">${title}</span>${renderDuplicateWarning(state.env, metadata.id)}`
       
       token = state.push('summary_close', 'summary', -1)
     } else {
@@ -183,7 +205,7 @@ export function calloutPlugin(md: any) {
       token.attrs = [['class', 'callout-header']]
       
       token = state.push('html_inline', '', 0)
-      token.content = `<span class="callout-icon">${icon}</span><span class="callout-title">${title}</span>`
+      token.content = `<span class="callout-icon">${icon}</span><span class="callout-title">${title}</span>${renderDuplicateWarning(state.env, metadata.id)}`
       
       token = state.push('callout_header_close', 'div', -1)
     }
@@ -204,6 +226,66 @@ export function calloutPlugin(md: any) {
 
     return true
   }, { alt: ['paragraph', 'reference', 'blockquote'] })
+}
+
+function getDuplicateInfo(env: any, id: string) {
+  const targets = Array.isArray(env?.referenceTargetsList) ? env.referenceTargetsList : []
+  return targets.find((target: any) => target.id === id && target.duplicate)
+}
+
+function renderDuplicateWarning(env: any, id: unknown): string {
+  if (typeof id !== 'string' || !id.trim()) return ''
+  const duplicateInfo = getDuplicateInfo(env, id.trim())
+  if (!duplicateInfo?.duplicate) return ''
+  return `<span class="callout-ref-warning" title="Duplicate reference id in this article">重复 id：${escapeHtml(
+    id.trim()
+  )}</span>`
+}
+
+export function inlineReferencePlugin(md: any) {
+  md.inline.ruler.before('emphasis', 'reference_link', (state: any, silent: boolean) => {
+    const start = state.pos
+    const max = state.posMax
+
+    if (start + 4 > max) return false
+    if (state.src.charCodeAt(start) !== 0x5b || state.src.charCodeAt(start + 1) !== 0x5b) {
+      return false
+    }
+
+    const closeIndex = state.src.indexOf(']]', start + 2)
+    if (closeIndex === -1 || closeIndex > max) return false
+
+    const payload = parseInlineReferencePayload(state.src.slice(start + 2, closeIndex))
+    if (!payload) return false
+
+    if (!silent) {
+      const token = state.push('reference_link', 'a', 0)
+      token.meta = payload
+      token.content = payload.text || payload.id
+    }
+
+    state.pos = closeIndex + 2
+    return true
+  })
+
+  md.renderer.rules.reference_link = (tokens: any, idx: number, _options: any, env: any) => {
+    const token = tokens[idx]
+    const payload = token.meta || {}
+    const implicitLabel = !payload.text
+    const currentTargets = env?.referenceTargets instanceof Map ? env.referenceTargets : null
+    const resolvedTitle =
+      implicitLabel && currentTargets && payload.post == null ? currentTargets.get(payload.id)?.title : null
+    const displayText = payload.text || resolvedTitle || payload.id
+    const href = payload.post
+      ? `#/post/${payload.post}#${buildReferenceAnchorId(payload.id)}`
+      : `#${buildReferenceAnchorId(payload.id)}`
+
+    return `<a class="reference-link" href="${escapeHtml(href)}" data-reference-id="${escapeHtml(
+      payload.id || ''
+    )}" data-reference-post="${escapeHtml(payload.post || '')}" data-reference-implicit-label="${
+      implicitLabel ? 'true' : 'false'
+    }">${escapeHtml(displayText)}</a>`
+  }
 }
 
 // GitHub Flavored Markdown Alert types
@@ -291,3 +373,4 @@ export function githubAlertsPlugin(md: any) {
     }
   })
 }
+

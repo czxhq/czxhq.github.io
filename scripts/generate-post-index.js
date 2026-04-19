@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const POSTS_DIR = path.resolve(__dirname, '../public/posts')
 const OUTPUT_FILE = path.resolve(__dirname, '../src/data/posts.json')
+const REFERENCE_OUTPUT_FILE = path.resolve(__dirname, '../src/data/reference-index.json')
 
 function parseFrontmatter(content) {
   const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
@@ -73,6 +74,121 @@ function stripMarkdown(content) {
     .trim();
 }
 
+function parseCalloutMetadata(str) {
+  if (!str) return {}
+  const trimmed = str.trim()
+  if (trimmed === '{}' || trimmed === '{ }') return {}
+
+  try {
+    const jsonStr = trimmed
+      .replace(/([{,]\s*)([A-Za-z_]\w*)\s*:/g, '$1"$2":')
+      .replace(/:\s*'([^']*)'/g, ':"$1"')
+    return JSON.parse(jsonStr)
+  } catch (error) {
+    const body = trimmed.replace(/^\{\s*|\s*\}$/g, '')
+    const metadata = {}
+    const pairRegex =
+      /([A-Za-z_]\w*)\s*(?:=|:)\s*(?:"([^"]*)"|'([^']*)'|([^\s,}]+))/g
+
+    let match
+    while ((match = pairRegex.exec(body)) !== null) {
+      const [, key, doubleQuoted, singleQuoted, bareValue] = match
+      metadata[key] = doubleQuoted ?? singleQuoted ?? bareValue ?? ''
+    }
+
+    if (Object.keys(metadata).length > 0) {
+      return metadata
+    }
+
+    console.error('Failed to parse callout metadata:', str, error)
+    return {}
+  }
+}
+
+function buildReferenceAnchorId(id) {
+  return `ref-${String(id)
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-')
+    .replace(/^-+|-+$/g, '')}`
+}
+
+function extractReferenceTargets(content, context) {
+  const normalized = content.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, '')
+  const lines = normalized.split(/\r?\n/)
+  const targets = []
+  const labels = {
+    lemma: '引理',
+    definition: '定义',
+    theorem: '定理'
+  }
+
+  for (let index = 0; index < lines.length; index++) {
+    const line = lines[index].trim()
+    const match = /^%%(\w+)(?:\s+({[^}]*}))?\s*$/.exec(line)
+    if (!match) continue
+
+    const type = match[1].toLowerCase()
+    if (!['lemma', 'definition', 'theorem'].includes(type)) continue
+
+    const metadata = parseCalloutMetadata(match[2] || '{}')
+    const targetId = typeof metadata.id === 'string' ? metadata.id.trim() : ''
+    if (!targetId) continue
+
+    let nextLine = index + 1
+    let depth = 1
+    for (; nextLine < lines.length; nextLine++) {
+      const candidate = lines[nextLine].trim()
+      if (candidate.startsWith('%%')) {
+        if (/^%%\w+/.test(candidate)) {
+          depth += 1
+        } else if (candidate === '%%') {
+          depth -= 1
+          if (depth === 0) break
+        }
+      }
+    }
+
+    const body = lines.slice(index + 1, nextLine).join('\n').trim()
+    targets.push({
+      id: targetId,
+      type,
+      title: (metadata.title || labels[type] || type).trim(),
+      slug: context.slug,
+      source: context.source,
+      anchor: buildReferenceAnchorId(targetId),
+      content: body,
+      previewText: stripMarkdown(body),
+      duplicate: false,
+      duplicateIndex: 1,
+      duplicateCount: 1
+    })
+
+    if (nextLine > index) {
+      index = nextLine
+    }
+  }
+
+  const grouped = new Map()
+  for (const target of targets) {
+    const key = `${target.slug}::${target.id}`
+    const bucket = grouped.get(key) || []
+    bucket.push(target)
+    grouped.set(key, bucket)
+  }
+
+  for (const bucket of grouped.values()) {
+    if (bucket.length <= 1) continue
+    bucket.forEach((target, index) => {
+      target.duplicate = true
+      target.duplicateIndex = index + 1
+      target.duplicateCount = bucket.length
+    })
+  }
+
+  return targets
+}
+
 function processPosts() {
   if (!fs.existsSync(POSTS_DIR)) {
     console.warn(`[WARN] Directory not found: ${POSTS_DIR}`);
@@ -81,6 +197,7 @@ function processPosts() {
   
   const items = fs.readdirSync(POSTS_DIR, { withFileTypes: true });
   const posts = [];
+  const references = [];
 
   for (const item of items) {
     let filePath = null;
@@ -160,6 +277,20 @@ function processPosts() {
         .filter(Boolean)
         .join(' ')
     });
+
+    references.push(
+      ...extractReferenceTargets(body, {
+        slug,
+        source: relativeSource
+      })
+    )
+  }
+
+  const duplicateReferences = references.filter((item) => item.duplicate)
+  for (const item of duplicateReferences) {
+    console.warn(
+      `[WARN] Duplicate reference id "${item.id}" in post "${item.slug}" (${item.duplicateIndex}/${item.duplicateCount}).`
+    )
   }
 
   // Sort by date descending
@@ -172,7 +303,9 @@ function processPosts() {
   }
 
   fs.writeFileSync(OUTPUT_FILE, JSON.stringify(posts, null, 2), 'utf8');
+  fs.writeFileSync(REFERENCE_OUTPUT_FILE, JSON.stringify(references, null, 2), 'utf8');
   console.log(`[SUCCESS] Generated ${OUTPUT_FILE} with ${posts.length} posts.`);
+  console.log(`[SUCCESS] Generated ${REFERENCE_OUTPUT_FILE} with ${references.length} references.`);
 }
 
 processPosts();

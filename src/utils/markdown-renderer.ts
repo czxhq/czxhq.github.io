@@ -5,8 +5,9 @@ import taskListsPlugin from 'markdown-it-task-lists'
 import katex from 'katex'
 import hljs from 'highlight.js'
 import { full as emoji } from 'markdown-it-emoji'
-import { calloutPlugin, githubAlertsPlugin, tocPlugin } from './markdown-plugin'
+import { calloutPlugin, githubAlertsPlugin, inlineReferencePlugin, tocPlugin } from './markdown-plugin'
 import { withBase } from './base-url'
+import { createReferenceLookup, extractReferenceTargetsFromMarkdown } from './reference'
 
 const copyIcon = `<svg class="copy-icon" viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path></svg>`
 
@@ -700,6 +701,7 @@ function createMarkdownIt(notePath: string | null): MarkdownIt {
   })
   md.use(markPlugin)
   md.use(calloutPlugin)
+  md.use(inlineReferencePlugin)
   md.use(tocPlugin)
   md.use(taskListsPlugin, { enabled: true, label: true, labelAfter: true })
   md.use(githubAlertsPlugin)
@@ -710,7 +712,18 @@ function createMarkdownIt(notePath: string | null): MarkdownIt {
 
 export function renderMarkdownHtml(content: string, notePath: string | null): string {
   const md = createMarkdownIt(notePath)
-  return normalizeEmbeddedMedia(md.render(content || ''), notePath)
+  const currentTargetsList = extractReferenceTargetsFromMarkdown(content || '', {
+    path: notePath || '',
+    post: notePath || ''
+  })
+  const currentTargets = createReferenceLookup(currentTargetsList)
+  return normalizeEmbeddedMedia(
+    md.render(content || '', {
+      referenceTargets: currentTargets,
+      referenceTargetsList: currentTargetsList
+    }),
+    notePath
+  )
 }
 
 export function createExportMarkup(

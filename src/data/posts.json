@@ -50,7 +50,7 @@
     "featured": true,
     "source": "/posts/test1/test1.md",
     "format": "md",
-    "searchText": "test1 test/test1 Vue 3 Vite Markdown 探索如何使用 Vue + Vite 打造如竹林般清净阅读体验的个人知识库系统，并复用笔记工具的 Markdown 渲染引擎。 test1 test1 test1 test1 test1 test1"
+    "searchText": "test1 test/test1 Vue 3 Vite Markdown 探索如何使用 Vue + Vite 打造如竹林般清净阅读体验的个人知识库系统，并复用笔记工具的 Markdown 渲染引擎。 test1 test1 test1 test1 test1 test1 %%definition {id=\"definition-id\" title=\"定义 1\"} v %% [[definition-id 定义 1]] [[test2#3 定理 12]]"
   },
   {
     "title": "test2",
@@ -69,7 +69,7 @@
     "featured": true,
     "source": "/posts/test2/test2.kmd",
     "format": "md",
-    "searchText": "test2 test/test2 Vue 3 Vite Markdown 探索如何使用 Vue + Vite 打造如竹林般清净阅读体验的个人知识库系统，并复用笔记工具的 Markdown 渲染引擎。 test2 test2 test2 test2 test2 test2"
+    "searchText": "test2 test/test2 Vue 3 Vite Markdown 探索如何使用 Vue + Vite 打造如竹林般清净阅读体验的个人知识库系统，并复用笔记工具的 Markdown 渲染引擎。 test2 test2 test2 test2 test2 test2 %%lemma {id=\"1\" title=\"引理 1\"} aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa %% %%theorem {id=\"2\" title=\"定理 1\"} $ab\\in c$ %% %%theorem {id=\"3\" title=\"定理 12\"} ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc %%"
   },
   {
     "title": "test3",
