@@ -8,7 +8,34 @@
     <meta name="keywords" content="__SITE_KEYWORDS__" />
     <meta name="author" content="__SITE_AUTHOR__" />
     <meta name="theme-color" content="__SITE_THEME_COLOR__" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>__SITE_TITLE__</title>
+    <script>
+      ;(() => {
+        const refreshKey = 'site-stale-asset-refresh'
+        window.addEventListener(
+          'error',
+          (event) => {
+            const target = event.target
+            const assetUrl =
+              target instanceof HTMLLinkElement || target instanceof HTMLScriptElement
+                ? target.href || target.src
+                : ''
+
+            if (!/\/assets\/index-[^/]+\.(css|js)(\?|$)/.test(assetUrl)) return
+            if (sessionStorage.getItem(refreshKey) === '1') return
+
+            sessionStorage.setItem(refreshKey, '1')
+            const url = new URL(window.location.href)
+            url.searchParams.set('refresh', Date.now().toString())
+            window.location.replace(url.toString())
+          },
+          true
+        )
+      })()
+    </script>
   </head>
   <body>
     <div id="app"></div>
