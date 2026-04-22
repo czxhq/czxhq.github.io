@@ -189,68 +189,101 @@ function extractReferenceTargets(content, context) {
   return targets
 }
 
+function isPostFile(name) {
+  return name.endsWith('.md') || name.endsWith('.kmd')
+}
+
+function toWebPath(filePath) {
+  return filePath.split(path.sep).join('/')
+}
+
+function createDefaultSlug(relativeSource) {
+  return relativeSource
+    .replace(/^\/?posts\//, '')
+    .replace(/\.(md|kmd)$/i, '')
+    .replace(/\/index$/i, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'untitled-post'
+}
+
+function findPreferredPostFile(dirPath, relativeDir) {
+  const entries = fs.readdirSync(dirPath, { withFileTypes: true })
+  const dirName = path.basename(dirPath)
+  const candidateNames = ['index.md', 'index.kmd', `${dirName}.md`, `${dirName}.kmd`]
+
+  for (const candidate of candidateNames) {
+    const candidatePath = path.join(dirPath, candidate)
+    if (fs.existsSync(candidatePath)) {
+      return {
+        filePath: candidatePath,
+        relativeSource: `/posts/${toWebPath(path.join(relativeDir, candidate))}`,
+        fileFormat: candidate.split('.').pop()
+      }
+    }
+  }
+
+  const nestedFiles = entries
+    .filter((entry) => entry.isFile() && isPostFile(entry.name))
+    .map((entry) => entry.name)
+    .sort((a, b) => a.localeCompare(b))
+
+  if (!nestedFiles.length) return null
+
+  const chosen = nestedFiles[0]
+  return {
+    filePath: path.join(dirPath, chosen),
+    relativeSource: `/posts/${toWebPath(path.join(relativeDir, chosen))}`,
+    fileFormat: chosen.split('.').pop()
+  }
+}
+
+function collectPostEntries(dirPath = POSTS_DIR, relativeDir = '') {
+  const items = fs.readdirSync(dirPath, { withFileTypes: true })
+  const posts = []
+
+  if (relativeDir) {
+    const preferred = findPreferredPostFile(dirPath, relativeDir)
+    if (preferred) {
+      posts.push(preferred)
+    }
+  } else {
+    for (const item of items) {
+      if (!item.isFile() || !isPostFile(item.name)) continue
+      posts.push({
+        filePath: path.join(dirPath, item.name),
+        relativeSource: `/posts/${item.name}`,
+        fileFormat: item.name.split('.').pop()
+      })
+    }
+  }
+
+  for (const item of items) {
+    if (!item.isDirectory()) continue
+    posts.push(...collectPostEntries(path.join(dirPath, item.name), path.join(relativeDir, item.name)))
+  }
+
+  return posts
+}
+
 function processPosts() {
   if (!fs.existsSync(POSTS_DIR)) {
     console.warn(`[WARN] Directory not found: ${POSTS_DIR}`);
     return;
   }
   
-  const items = fs.readdirSync(POSTS_DIR, { withFileTypes: true });
   const posts = [];
   const references = [];
+  const postEntries = collectPostEntries();
 
-  for (const item of items) {
-    let filePath = null;
-    let fileFormat = null;
-    let relativeSource = null;
-
-    if (item.isFile()) {
-      if (item.name.endsWith('.md') || item.name.endsWith('.kmd')) {
-        filePath = path.join(POSTS_DIR, item.name);
-        fileFormat = item.name.split('.').pop();
-        relativeSource = `/posts/${item.name}`;
-      }
-    } else if (item.isDirectory()) {
-      // Look for index.md, index.kmd, or [dirname].md, [dirname].kmd first.
-      // If none exist, fall back to the first .md/.kmd file inside the directory.
-      const dirPath = path.join(POSTS_DIR, item.name);
-      const candidates = ['index.md', 'index.kmd', `${item.name}.md`, `${item.name}.kmd`];
-      
-      for (const cand of candidates) {
-        const candPath = path.join(dirPath, cand);
-        if (fs.existsSync(candPath)) {
-          filePath = candPath;
-          fileFormat = cand.split('.').pop();
-          relativeSource = `/posts/${item.name}/${cand}`;
-          break;
-        }
-      }
-
-      if (!filePath) {
-        const nestedFiles = fs
-          .readdirSync(dirPath, { withFileTypes: true })
-          .filter((entry) => entry.isFile() && (entry.name.endsWith('.md') || entry.name.endsWith('.kmd')))
-          .map((entry) => entry.name)
-          .sort((a, b) => a.localeCompare(b));
-
-        if (nestedFiles.length > 0) {
-          const chosen = nestedFiles[0];
-          filePath = path.join(dirPath, chosen);
-          fileFormat = chosen.split('.').pop();
-          relativeSource = `/posts/${item.name}/${chosen}`;
-        }
-      }
-    }
-
-    if (!filePath) continue;
-
+  for (const { filePath, fileFormat, relativeSource } of postEntries) {
     const content = fs.readFileSync(filePath, 'utf8');
     const { attributes, body } = parseFrontmatter(content);
     const plainText = stripMarkdown(body);
     const generatedSummary = plainText.slice(0, 160);
 
-    // If there is no slug in frontmatter, use directory name or filename without extension
-    const defaultSlug = item.isDirectory() ? item.name : path.parse(item.name).name;
+    // If there is no slug in frontmatter, use the relative path to avoid nested-post collisions.
+    const defaultSlug = createDefaultSlug(relativeSource);
     const slug = attributes.slug || defaultSlug;
     
     // Default values if some attributes are missing
