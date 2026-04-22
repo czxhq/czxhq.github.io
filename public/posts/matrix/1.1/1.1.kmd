@@ -7,7 +7,7 @@ category: "数学/矩阵理论/第一章 线性代数引论"
 tags:
   - "Tutorial"
   - "Math"
-summary: "Write a short summary here."
+summary: "线性空间基本概念"
 cover: ""
 draft: false
 featured: true
@@ -16,4 +16,6 @@ format: "md"
 
 # 1.1 线性空间
 
-Write your article here.
+%%definition {id="1" title="定义1.1.1（n维向量）"}
+若 $n$ 维向量写成$$\begin{pmatrix} \alpha_1 \\ \alpha_2 \\ \vdots \\ \alpha_n \end{pmatrix}$$的形式，则称为 $n$ 维列向量；若 $n$ 维向量写成$$(\alpha_1, \alpha_2, \dots, \alpha_n)$$的形式，则称为 $n$ 维行向量。这 $n$ 个数称为该向量的 $n$ 个分量，其中 $\alpha_i$ 称为第 $i$ 个分量。
+%%
