@@ -11,5 +11,44 @@
     "duplicate": false,
     "duplicateIndex": 1,
     "duplicateCount": 1
+  },
+  {
+    "id": "2",
+    "type": "definition",
+    "title": "定义 1.1.2（向量空间）",
+    "slug": "matrix1.1",
+    "source": "/posts/matrix/1.1/1.1.kmd",
+    "anchor": "ref-2",
+    "content": "设 $V$ 是 $n$ 维实向量的非空集合，若 $V$ 对向量的加法和数乘两种运算都封闭，即对任意向量 $\\boldsymbol{\\alpha}, \\boldsymbol{\\beta} \\in V$ 和 $k \\in \\mathbb{R}$，都有 $\\boldsymbol{\\alpha} + \\boldsymbol{\\beta} \\in V$ ($V$ 对向量的加法封闭) 和 $k\\boldsymbol{\\alpha} \\in V$ ($V$ 对向量的数乘封闭)，则称集合 $V$ 为向量空间。",
+    "previewText": "设 $V$ 是 $n$ 维实向量的非空集合，若 $V$ 对向量的加法和数乘两种运算都封闭，即对任意向量 $\\boldsymbol{\\alpha}, \\boldsymbol{\\beta} \\in V$ 和 $k \\in \\mathbb{R}$，都有 $\\boldsymbol{\\alpha} + \\boldsymbol{\\beta} \\in V$ ($V$ 对向量的加法封闭) 和 $k\\boldsymbol{\\alpha} \\in V$ ($V$ 对向量的数乘封闭)，则称集合 $V$ 为向量空间。",
+    "duplicate": false,
+    "duplicateIndex": 1,
+    "duplicateCount": 1
+  },
+  {
+    "id": "3",
+    "type": "definition",
+    "title": "定义 1.1.3（数域）",
+    "slug": "matrix1.1",
+    "source": "/posts/matrix/1.1/1.1.kmd",
+    "anchor": "ref-3",
+    "content": "设 $F$ 是包含 $0$ 和 $1$ 的非空数集，若 $F$ 中任意两个数的和、差、积、商（除数不为 $0$）仍在该数集，即对四则运算封闭，则称该数集 $F$ 为一个数域。",
+    "previewText": "设 $F$ 是包含 $0$ 和 $1$ 的非空数集，若 $F$ 中任意两个数的和、差、积、商（除数不为 $0$）仍在该数集，即对四则运算封闭，则称该数集 $F$ 为一个数域。",
+    "duplicate": false,
+    "duplicateIndex": 1,
+    "duplicateCount": 1
+  },
+  {
+    "id": "4",
+    "type": "definition",
+    "title": "定义 1.1.4（线性空间）",
+    "slug": "matrix1.1",
+    "source": "/posts/matrix/1.1/1.1.kmd",
+    "anchor": "ref-4",
+    "content": "设 $(V, +)$ 是一个加群，$F$ 是一个数域。在 $V$ 上定义了一种代数运算，称为加法，记为“$+$”，使得对 $V$ 中任意两个元素 $\\boldsymbol{\\alpha}, \\boldsymbol{\\beta}$ 都有 $V$ 中唯一的元素 $\\boldsymbol{\\alpha} + \\boldsymbol{\\beta}$ 与之对应，称为 $\\boldsymbol{\\alpha}$ 与 $\\boldsymbol{\\beta}$ 的和；定义了 $F$ 中的数与 $V$ 中元素的一种代数运算，称为数乘，记为“$\\cdot$”，使得对 $V$ 中任意元素 $\\boldsymbol{\\alpha}$ 和 $F$ 中任意元素 $k$ 有 $V$ 中唯一的元素 $k \\cdot \\boldsymbol{\\alpha}$（常简记为 $k\\boldsymbol{\\alpha}$）与之对应，称为 $k$ 与 $\\boldsymbol{\\alpha}$ 的积。如果加法和数乘满足如下规则：\n（1）交换律：$\\boldsymbol{\\alpha} + \\boldsymbol{\\beta} = \\boldsymbol{\\beta} + \\boldsymbol{\\alpha}$；\n（2）结合律：$(\\boldsymbol{\\alpha} + \\boldsymbol{\\beta}) + \\boldsymbol{\\gamma} = \\boldsymbol{\\alpha} + (\\boldsymbol{\\beta} + \\boldsymbol{\\gamma})$；\n（3）存在零元素：存在元素 $\\boldsymbol{\\theta} \\in V$，满足 $\\forall \\boldsymbol{\\alpha} \\in V, \\boldsymbol{\\alpha} + \\boldsymbol{\\theta} = \\boldsymbol{\\alpha}$；\n（4）存在负元素：$\\forall \\boldsymbol{\\alpha} \\in V$，存在一元素，记为 $-\\boldsymbol{\\alpha}$，满足 $\\boldsymbol{\\alpha} + (-\\boldsymbol{\\alpha}) = \\boldsymbol{\\theta}$；\n（5）数乘的结合律：$k(l\\boldsymbol{\\alpha}) = (kl)\\boldsymbol{\\alpha}$；\n（6）数乘对加法的分配律：$k(\\boldsymbol{\\alpha} + \\boldsymbol{\\beta}) = k\\boldsymbol{\\alpha} + k\\boldsymbol{\\beta}$；\n（7）数乘对数的加法的分配律：$(k + l)\\boldsymbol{\\alpha} = k\\boldsymbol{\\alpha} + l\\boldsymbol{\\alpha}$；\n（8）数乘的初始条件（单位元素）：$1 \\cdot \\boldsymbol{\\alpha} = \\boldsymbol{\\alpha}$。\n其中，$\\boldsymbol{\\alpha}, \\boldsymbol{\\beta}, \\boldsymbol{\\gamma}$ 是 $V$ 中任一元素，$k$ 和 $l$ 是数域 $F$ 中任意数，则称 $V$ 是数域 $F$ 上的线性空间，记为 $(V, +, \\cdot)$，$V$ 中的元素称为向量，$F$ 中的元素称为标量。特别地，当 $F = \\mathbb{R}$ 时，称 $V$ 为实线性空间；当 $F = \\mathbb{C}$ 时，称 $V$ 为复线性空间。",
+    "previewText": "设 $(V, +)$ 是一个加群，$F$ 是一个数域。在 $V$ 上定义了一种代数运算，称为加法，记为“$+$”，使得对 $V$ 中任意两个元素 $\\boldsymbol{\\alpha}, \\boldsymbol{\\beta}$ 都有 $V$ 中唯一的元素 $\\boldsymbol{\\alpha} + \\boldsymbol{\\beta}$ 与之对应，称为 $\\boldsymbol{\\alpha}$ 与 $\\boldsymbol{\\beta}$ 的和；定义了 $F$ 中的数与 $V$ 中元素的一种代数运算，称为数乘，记为“$\\cdot$”，使得对 $V$ 中任意元素 $\\boldsymbol{\\alpha}$ 和 $F$ 中任意元素 $k$ 有 $V$ 中唯一的元素 $k \\cdot \\boldsymbol{\\alpha}$（常简记为 $k\\boldsymbol{\\alpha}$）与之对应，称为 $k$ 与 $\\boldsymbol{\\alpha}$ 的积。如果加法和数乘满足如下规则： （1）交换律：$\\boldsymbol{\\alpha} + \\boldsymbol{\\beta} = \\boldsymbol{\\beta} + \\boldsymbol{\\alpha}$； （2）结合律：$(\\boldsymbol{\\alpha} + \\boldsymbol{\\beta}) + \\boldsymbol{\\gamma} = \\boldsymbol{\\alpha} + (\\boldsymbol{\\beta} + \\boldsymbol{\\gamma})$； （3）存在零元素：存在元素 $\\boldsymbol{\\theta} \\in V$，满足 $\\forall \\boldsymbol{\\alpha} \\in V, \\boldsymbol{\\alpha} + \\boldsymbol{\\theta} = \\boldsymbol{\\alpha}$； （4）存在负元素：$\\forall \\boldsymbol{\\alpha} \\in V$，存在一元素，记为 $-\\boldsymbol{\\alpha}$，满足 $\\boldsymbol{\\alpha} + (-\\boldsymbol{\\alpha}) = \\boldsymbol{\\theta}$； （5）数乘的结合律：$k(l\\boldsymbol{\\alpha}) = (kl)\\boldsymbol{\\alpha}$； （6）数乘对加法的分配律：$k(\\boldsymbol{\\alpha} + \\boldsymbol{\\beta}) = k\\boldsymbol{\\alpha} + k\\boldsymbol{\\beta}$； （7）数乘对数的加法的分配律：$(k + l)\\boldsymbol{\\alpha} = k\\boldsymbol{\\alpha} + l\\boldsymbol{\\alpha}$； （8）数乘的初始条件（单位元素）：$1 \\cdot \\boldsymbol{\\alpha} = \\boldsymbol{\\alpha}$。 其中，$\\boldsymbol{\\alpha}, \\boldsymbol{\\beta}, \\boldsymbol{\\gamma}$ 是 $V$ 中任一元素，$k$ 和 $l$ 是数域 $F$ 中任意数，则称 $V$ 是数域 $F$ 上的线性空间，记为 $(V, +, \\cdot)$，$V$ 中的元素称为向量，$F$ 中的元素称为标量。特别地，当 $F = \\mathbb{R}$ 时，称 $V$ 为实线性空间；当 $F = \\mathbb{C}$ 时，称 $V$ 为复线性空间。",
+    "duplicate": false,
+    "duplicateIndex": 1,
+    "duplicateCount": 1
   }
 ]
