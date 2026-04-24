@@ -44,6 +44,7 @@
         class="reference-preview markdown-body"
         :style="{ left: `${referencePreview.x}px`, top: `${referencePreview.y}px` }"
         v-html="referencePreview.html"
+        @wheel.stop
         @mouseleave="handleReferencePreviewLeave"
       ></div>
 
@@ -526,8 +527,8 @@ function backToTop() {
   overscroll-behavior: contain;
   pointer-events: auto;
   padding: 16px 18px;
-  background: rgba(247, 244, 236, 0.98);
-  border: 1px solid rgba(92, 122, 58, 0.16);
+  background: #f7f4ec;
+  border: 1px solid rgba(92, 122, 58, 0.24);
   border-radius: 14px;
   box-shadow: 0 18px 40px rgba(58, 72, 34, 0.14);
 }
