@@ -35,14 +35,16 @@
         @click="handleContentClick"
         @mouseover="handleReferenceHover"
         @mousemove="moveReferencePreview"
-        @mouseleave="hideReferencePreview"
+        @mouseleave="handleContentLeave"
       ></div>
 
       <div
         v-if="referencePreview.visible"
+        ref="referencePreviewRef"
         class="reference-preview markdown-body"
         :style="{ left: `${referencePreview.x}px`, top: `${referencePreview.y}px` }"
         v-html="referencePreview.html"
+        @mouseleave="handleReferencePreviewLeave"
       ></div>
 
       <footer class="post-footer">
@@ -82,6 +84,7 @@ const htmlContent = ref('')
 const outline = ref([])
 const activeSlug = ref('')
 const contentRef = ref(null)
+const referencePreviewRef = ref(null)
 const currentReferences = ref([])
 const referencePreview = ref({
   visible: false,
@@ -250,19 +253,56 @@ function handleReferenceHover(event) {
   referencePreview.value = {
     visible: true,
     html: `<div class="reference-preview-head"><span class="reference-preview-type">${escapePreviewHtml(target.type)}</span><strong>${escapePreviewHtml(target.title)}</strong></div>${renderMarkdownHtml(target.content || '*No preview available.*', target.source || post.value?.source || '')}`,
-    x: event.clientX + 18,
-    y: event.clientY + 18
+    x: 0,
+    y: 0
   }
+  updateReferencePreviewPosition(event)
 }
 
 function moveReferencePreview(event) {
   if (!referencePreview.value.visible) return
-  referencePreview.value.x = event.clientX + 18
-  referencePreview.value.y = event.clientY + 18
+  updateReferencePreviewPosition(event)
+}
+
+function handleContentLeave(event) {
+  const nextTarget = event.relatedTarget
+  if (referencePreviewRef.value?.contains(nextTarget)) {
+    return
+  }
+  hideReferencePreview()
+}
+
+function handleReferencePreviewLeave(event) {
+  const nextTarget = event.relatedTarget
+  if (contentRef.value?.contains(nextTarget)) {
+    return
+  }
+  hideReferencePreview()
 }
 
 function hideReferencePreview() {
   referencePreview.value.visible = false
+}
+
+function updateReferencePreviewPosition(event) {
+  const offset = 18
+  const margin = 16
+  const previewWidth = Math.min(420, Math.max(280, Math.floor(window.innerWidth * 0.4)))
+  const previewHeight = 320
+
+  let x = event.clientX + offset
+  let y = event.clientY + offset
+
+  if (x + previewWidth > window.innerWidth - margin) {
+    x = Math.max(margin, event.clientX - previewWidth - 12)
+  }
+
+  if (y + previewHeight > window.innerHeight - margin) {
+    y = Math.max(margin, event.clientY - previewHeight - 12)
+  }
+
+  referencePreview.value.x = x
+  referencePreview.value.y = y
 }
 
 function hydrateReferenceLabels() {
@@ -481,8 +521,10 @@ function backToTop() {
   z-index: 30;
   width: min(420px, 40vw);
   max-height: 320px;
-  overflow: auto;
-  pointer-events: none;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  pointer-events: auto;
   padding: 16px 18px;
   background: rgba(247, 244, 236, 0.98);
   border: 1px solid rgba(92, 122, 58, 0.16);
