@@ -72,5 +72,55 @@ format: "md"
 %%
 
 %%note {title: "注5", icon: "📝"}
-Write your note here.
+设 $V$ 是数域 $F$ 上的线性空间，有
+（1）零向量是唯一的；
+（2）任一向量的负元素是唯一的；
+（3）对任意 $k \in F$ 和 $\boldsymbol{\alpha} \in V, 0\boldsymbol{\alpha} = \boldsymbol{\theta}, (-1)\boldsymbol{\alpha} = -\boldsymbol{\alpha}, k\boldsymbol{\theta} = \boldsymbol{\theta}$；
+（4）若 $k\boldsymbol{\alpha} = \boldsymbol{\theta}$，则 $k = 0$ 或 $\boldsymbol{\alpha} = \boldsymbol{\theta}$。
+%%fold {title: "证明"， icon: "📝"}
+%%fold {title: "证明（1）", icon: "📝"}
+反证法. 假设存在两个不等的零向量, 分别记为 $\boldsymbol{\theta}_1$ 和 $\boldsymbol{\theta}_2$. 根据零向量性质有: $\boldsymbol{\theta}_1 = \boldsymbol{\theta}_1 + \boldsymbol{\theta}_2$. 由交换律知 $\boldsymbol{\theta}_1 + \boldsymbol{\theta}_2 = \boldsymbol{\theta}_2 + \boldsymbol{\theta}_1$, 故 $\boldsymbol{\theta}_1 = \boldsymbol{\theta}_2 + \boldsymbol{\theta}_1$. 又知 $\boldsymbol{\theta}_2 = \boldsymbol{\theta}_2 + \boldsymbol{\theta}_1$, 故 $\boldsymbol{\theta}_1 = \boldsymbol{\theta}_2$.
 %%
+%%fold {title: "证明（2）", icon: "📝"}
+反证法. 假设对 $V$ 中任意向量 $\boldsymbol{\alpha}$ 的负元素是不唯一的, 即存在两个不等的向量 $\boldsymbol{\beta}_1$ 和 $\boldsymbol{\beta}_2$ 满足 $\boldsymbol{\alpha} + \boldsymbol{\beta}_1 = \boldsymbol{\theta}, \boldsymbol{\alpha} + \boldsymbol{\beta}_2 = \boldsymbol{\theta}$. 此时有 $\boldsymbol{\beta}_1 = \boldsymbol{\beta}_1 + \boldsymbol{\theta} = \boldsymbol{\beta}_1 + (\boldsymbol{\alpha} + \boldsymbol{\beta}_2) = (\boldsymbol{\beta}_1 + \boldsymbol{\alpha}) + \boldsymbol{\beta}_2 = (\boldsymbol{\alpha} + \boldsymbol{\beta}_1) + \boldsymbol{\beta}_2 = \boldsymbol{\theta} + \boldsymbol{\beta}_2 = \boldsymbol{\beta}_2 + \boldsymbol{\theta} = \boldsymbol{\beta}_2$. 故 $\boldsymbol{\alpha}$ 的负元素唯一.
+%%
+%%fold {title: "证明（3）", icon: "📝"}
+由数乘对数的加法的分配律知, $\boldsymbol{\alpha} + 0\boldsymbol{\alpha} = (1+0)\boldsymbol{\alpha} = \boldsymbol{\alpha}$; 又由零向量唯一性知, $0\boldsymbol{\alpha} = \boldsymbol{\theta}$.
+由数乘对数的加法的分配律知, $\boldsymbol{\alpha} + (-1)\boldsymbol{\alpha} = (1-1)\boldsymbol{\alpha} = 0\boldsymbol{\alpha} = \boldsymbol{\theta}$; 又由负元素唯一性知, $(-1)\boldsymbol{\alpha} = -\boldsymbol{\alpha}$.
+当 $k=0$ 时, 有 $0\boldsymbol{\alpha} = \boldsymbol{\theta}$ 成立; 当 $k \neq 0$ 时, $\boldsymbol{\alpha} + k\boldsymbol{\theta} = k\left(\frac{1}{k}\boldsymbol{\alpha} + \boldsymbol{\theta}\right) = k\left(\frac{1}{k}\boldsymbol{\alpha}\right) = \boldsymbol{\alpha}$; 由零向量唯一性知, $k\boldsymbol{\theta} = \boldsymbol{\theta}$. 因此, $k\boldsymbol{\theta} = \boldsymbol{\theta}$ 恒成立.
+%%
+%%fold {title: "证明（4）", icon: "📝"}
+当 $k=0$ 时, 由 $0\boldsymbol{\alpha} = \boldsymbol{\theta}$ 知, $k\boldsymbol{\alpha} = \boldsymbol{\theta}$; 当 $k \neq 0$ 时, 由等式两侧同乘 $\frac{1}{k}$ 知, $\boldsymbol{\alpha} = \frac{1}{k}\boldsymbol{\theta} = \boldsymbol{\theta}$. 故 $k=0$ 或 $\boldsymbol{\alpha} = \boldsymbol{\theta}$.
+%%
+%%
+%%
+
+%%note {title: "注6", icon: "📝"}
+线性空间中的两种运算（加法和数乘）合称为线性运算. 若线性空间 $V$ 的向量 $\boldsymbol{\alpha}$ 可由 $V$ 的一组向量 $\boldsymbol{\alpha}_1, \cdots, \boldsymbol{\alpha}_n$ 通过线性运算获得，即存在 $k_i \in F, i=1, \cdots, n$, 满足$$\boldsymbol{\alpha} = k_1 \boldsymbol{\alpha}_1 + \cdots + k_n \boldsymbol{\alpha}_n$$则称向量 $\boldsymbol{\alpha}$ 是向量组 $\boldsymbol{\alpha}_1, \cdots, \boldsymbol{\alpha}_n$ 的一个线性组合，或者说，$\boldsymbol{\alpha}$ 可由向量组 $\boldsymbol{\alpha}_1, \cdots, \boldsymbol{\alpha}_n$ 线性表示.
+%%
+
+%%note {title: "思考", icon: "📝"}
+对一般的 $n$ 阶复方阵 $\boldsymbol{A}$，它的幂矩阵 $\boldsymbol{A}^n$ 是否可由 $\boldsymbol{I}, \boldsymbol{A}, \boldsymbol{A}^2, \dots, \boldsymbol{A}^{n-1}$ 线性表示？
+%%fold {title: "解", icon: "📂"}
+能。
+
+原因是 Cayley–Hamilton 定理：
+$$p_A(A) = 0.$$
+它给出一个形如
+$$A^n + c_{n-1}A^{n-1} + \cdots + c_1A + c_0I = 0$$
+的关系式，所以
+$$A^n$$
+能用前面的低次幂表示。
+
+但更准确地说，如果最小多项式次数是 $r$，那么其实
+$$I, A, \dots, A^{r-1}$$
+就够了。
+
+所以最终结论是：
+$$\text{span}\{I, A, A^2, \dots\} = \text{span}\{I, A, \dots, A^{r-1}\}, \quad r = \deg m_A.$$
+其中
+$$r \le n.$$
+也就是说，矩阵 $A$ 的所有幂所生成的空间，维数最多是 $n$，但实际可能更小，真正决定这个大小的是最小多项式的次数。
+%%
+%%
+
