@@ -34,8 +34,7 @@
         v-html="htmlContent"
         @click="handleContentClick"
         @mouseover="handleReferenceHover"
-        @mousemove="moveReferencePreview"
-        @mouseleave="handleContentLeave"
+        @mouseout="handleContentMouseOut"
       ></div>
 
       <div
@@ -44,7 +43,8 @@
         class="reference-preview markdown-body"
         :style="{ left: `${referencePreview.x}px`, top: `${referencePreview.y}px` }"
         v-html="referencePreview.html"
-        @wheel.stop
+        @mouseenter="cancelReferencePreviewHide"
+        @wheel.prevent.stop="handleReferencePreviewWheel"
         @mouseleave="handleReferencePreviewLeave"
       ></div>
 
@@ -87,6 +87,8 @@ const activeSlug = ref('')
 const contentRef = ref(null)
 const referencePreviewRef = ref(null)
 const currentReferences = ref([])
+let referencePreviewHideTimer = null
+let activeReferenceAnchor = null
 const referencePreview = ref({
   visible: false,
   html: '',
@@ -241,15 +243,21 @@ function resolveReferenceTarget(anchor) {
 function handleReferenceHover(event) {
   const anchor = event.target instanceof Element ? event.target.closest('a.reference-link') : null
   if (!anchor) {
-    hideReferencePreview()
+    return
+  }
+
+  cancelReferencePreviewHide()
+  if (activeReferenceAnchor === anchor && referencePreview.value.visible) {
     return
   }
 
   const target = resolveReferenceTarget(anchor)
   if (!target) {
-    hideReferencePreview()
+    scheduleReferencePreviewHide()
     return
   }
+
+  activeReferenceAnchor = anchor
 
   referencePreview.value = {
     visible: true,
@@ -260,29 +268,54 @@ function handleReferenceHover(event) {
   updateReferencePreviewPosition(event)
 }
 
-function moveReferencePreview(event) {
-  if (!referencePreview.value.visible) return
-  updateReferencePreviewPosition(event)
-}
+function handleContentMouseOut(event) {
+  const currentAnchor =
+    event.target instanceof Element ? event.target.closest('a.reference-link') : null
+  if (!currentAnchor) return
 
-function handleContentLeave(event) {
   const nextTarget = event.relatedTarget
-  if (referencePreviewRef.value?.contains(nextTarget)) {
+  if (
+    currentAnchor.contains(nextTarget) ||
+    referencePreviewRef.value?.contains(nextTarget)
+  ) {
     return
   }
-  hideReferencePreview()
+  scheduleReferencePreviewHide()
 }
 
 function handleReferencePreviewLeave(event) {
   const nextTarget = event.relatedTarget
-  if (contentRef.value?.contains(nextTarget)) {
+  if (activeReferenceAnchor?.contains(nextTarget)) {
     return
   }
-  hideReferencePreview()
+  scheduleReferencePreviewHide()
+}
+
+function handleReferencePreviewWheel(event) {
+  const container = referencePreviewRef.value
+  if (!container) return
+  container.scrollTop += event.deltaY
 }
 
 function hideReferencePreview() {
+  cancelReferencePreviewHide()
+  activeReferenceAnchor = null
   referencePreview.value.visible = false
+}
+
+function scheduleReferencePreviewHide() {
+  cancelReferencePreviewHide()
+  referencePreviewHideTimer = window.setTimeout(() => {
+    referencePreview.value.visible = false
+    referencePreviewHideTimer = null
+  }, 160)
+}
+
+function cancelReferencePreviewHide() {
+  if (referencePreviewHideTimer != null) {
+    window.clearTimeout(referencePreviewHideTimer)
+    referencePreviewHideTimer = null
+  }
 }
 
 function updateReferencePreviewPosition(event) {
@@ -531,6 +564,10 @@ function backToTop() {
   border: 1px solid rgba(92, 122, 58, 0.24);
   border-radius: 14px;
   box-shadow: 0 18px 40px rgba(58, 72, 34, 0.14);
+}
+
+.reference-preview.markdown-body {
+  background: #f7f4ec !important;
 }
 
 .reference-preview :deep(.reference-preview-head) {
