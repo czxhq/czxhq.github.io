@@ -90,6 +90,5 @@ format: "md"
 有可能，但不是总是可能。设$$N(A) = \{x \in \mathbb{C}^n : Ax = 0\}$$是零空间，$$R(A) = \{Ax : x \in \mathbb{C}^n\}$$是列空间。若$$N(A) = R(A),$$则两者维数相等。由秩-零度定理：$$\dim N(A) + R(A) = n.$$因为二者相等，所以$$\dim N(A) = \dim R(A).$$
 于是$$2 \dim R(A) = n.$$所以$$\operatorname{rank}(A) = \frac{n}{2}.$$因此 $n$ 必须是偶数。若 $n$ 是奇数，则零空间和列空间不可能相同。另外，因为$$R(A) = N(A),$$所以任意 $x \in \mathbb{C}^n$，有$$Ax \in R(A) = N(A).$$因此$$A(Ax) = 0,$$即$$A^2x = 0.$$所以$$A^2 = O.$$因此若零空间和列空间相同，则矩阵 $A$ 满足：$$A^2 = O, \quad \operatorname{rank}(A) = \frac{n}{2}.$$
 反过来，如果$$A^2 = O, \quad \operatorname{rank}(A) = \frac{n}{2},$$则$$R(A) \subseteq N(A),$$又因为$$\dim R(A) = \dim N(A) = \frac{n}{2},$$所以$$R(A) = N(A).$$
-所以结论是：$$N(A) = R(A) \iff A^2 = O, \operatorname{rank}(A) = \frac{n}{2}.$$因此 $n$ 必须为偶数，且 $A$ 是平方为零的幂零矩阵。
-%%
+所以结论是：$$N(A) = R(A) \iff A^2 = O, \operatorname{rank}(A) = \frac{n}{2}，n为偶数$$
 %%
