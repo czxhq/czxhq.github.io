@@ -280,7 +280,7 @@ body {
 }
 .markdown-body .katex-html,
 .milkdown-wrapper .katex-html {
-  display: inline-block !important;
+  display: inherit !important;
 }
 .markdown-body .katex-display,
 .milkdown-wrapper .katex-display {
@@ -288,11 +288,6 @@ body {
   margin: 1.25em 0;
   overflow-x: auto;
   overflow-y: hidden;
-}
-.markdown-body .katex-display > .katex-html,
-.milkdown-wrapper .katex-display > .katex-html {
-  display: block !important;
-  text-align: center;
 }
 .markdown-body math,
 .milkdown-wrapper math {
