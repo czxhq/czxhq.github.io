@@ -253,17 +253,20 @@ body {
 }
 .markdown-body .katex-mathml,
 .milkdown-wrapper .katex-mathml {
-  position: static !important;
-  width: auto !important;
-  height: auto !important;
-  overflow: visible !important;
-  clip: auto !important;
-  clip-path: none !important;
-  white-space: normal !important;
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  border: 0 !important;
+  white-space: nowrap !important;
 }
 .markdown-body .katex-html,
 .milkdown-wrapper .katex-html {
-  display: none !important;
+  display: inline-block !important;
 }
 .markdown-body .katex-display,
 .milkdown-wrapper .katex-display {
@@ -271,6 +274,11 @@ body {
   margin: 1.25em 0;
   overflow-x: auto;
   overflow-y: hidden;
+}
+.markdown-body .katex-display > .katex-html,
+.milkdown-wrapper .katex-display > .katex-html {
+  display: block !important;
+  text-align: center;
 }
 .markdown-body math,
 .milkdown-wrapper math {
