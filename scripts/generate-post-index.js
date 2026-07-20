@@ -207,55 +207,42 @@ function createDefaultSlug(relativeSource) {
     .replace(/^-+|-+$/g, '') || 'untitled-post'
 }
 
-function findPreferredPostFile(dirPath, relativeDir) {
-  const entries = fs.readdirSync(dirPath, { withFileTypes: true })
-  const dirName = path.basename(dirPath)
-  const candidateNames = ['index.md', 'index.kmd', `${dirName}.md`, `${dirName}.kmd`]
-
-  for (const candidate of candidateNames) {
-    const candidatePath = path.join(dirPath, candidate)
-    if (fs.existsSync(candidatePath)) {
-      return {
-        filePath: candidatePath,
-        relativeSource: `/posts/${toWebPath(path.join(relativeDir, candidate))}`,
-        fileFormat: candidate.split('.').pop()
-      }
-    }
+function createUniqueSlug(preferredSlug, fallbackSlug, usedSlugs) {
+  const baseSlug = preferredSlug || fallbackSlug
+  if (!usedSlugs.has(baseSlug)) {
+    usedSlugs.add(baseSlug)
+    return baseSlug
   }
 
-  const nestedFiles = entries
-    .filter((entry) => entry.isFile() && isPostFile(entry.name))
-    .map((entry) => entry.name)
-    .sort((a, b) => a.localeCompare(b))
-
-  if (!nestedFiles.length) return null
-
-  const chosen = nestedFiles[0]
-  return {
-    filePath: path.join(dirPath, chosen),
-    relativeSource: `/posts/${toWebPath(path.join(relativeDir, chosen))}`,
-    fileFormat: chosen.split('.').pop()
+  if (fallbackSlug !== baseSlug && !usedSlugs.has(fallbackSlug)) {
+    console.warn(`[WARN] Duplicate post slug "${baseSlug}". Using fallback slug "${fallbackSlug}".`)
+    usedSlugs.add(fallbackSlug)
+    return fallbackSlug
   }
+
+  let index = 2
+  let nextSlug = `${fallbackSlug}-${index}`
+  while (usedSlugs.has(nextSlug)) {
+    index += 1
+    nextSlug = `${fallbackSlug}-${index}`
+  }
+
+  console.warn(`[WARN] Duplicate post slug "${baseSlug}". Using fallback slug "${nextSlug}".`)
+  usedSlugs.add(nextSlug)
+  return nextSlug
 }
 
 function collectPostEntries(dirPath = POSTS_DIR, relativeDir = '') {
   const items = fs.readdirSync(dirPath, { withFileTypes: true })
   const posts = []
 
-  if (relativeDir) {
-    const preferred = findPreferredPostFile(dirPath, relativeDir)
-    if (preferred) {
-      posts.push(preferred)
-    }
-  } else {
-    for (const item of items) {
-      if (!item.isFile() || !isPostFile(item.name)) continue
-      posts.push({
-        filePath: path.join(dirPath, item.name),
-        relativeSource: `/posts/${item.name}`,
-        fileFormat: item.name.split('.').pop()
-      })
-    }
+  for (const item of items) {
+    if (!item.isFile() || !isPostFile(item.name)) continue
+    posts.push({
+      filePath: path.join(dirPath, item.name),
+      relativeSource: `/posts/${toWebPath(path.join(relativeDir, item.name))}`,
+      fileFormat: item.name.split('.').pop()
+    })
   }
 
   for (const item of items) {
@@ -274,6 +261,7 @@ function processPosts() {
   
   const posts = [];
   const references = [];
+  const usedSlugs = new Set();
   const postEntries = collectPostEntries();
 
   for (const { filePath, fileFormat, relativeSource } of postEntries) {
@@ -284,7 +272,7 @@ function processPosts() {
 
     // If there is no slug in frontmatter, use the relative path to avoid nested-post collisions.
     const defaultSlug = createDefaultSlug(relativeSource);
-    const slug = attributes.slug || defaultSlug;
+    const slug = createUniqueSlug(attributes.slug, defaultSlug, usedSlugs);
     
     // Default values if some attributes are missing
     posts.push({

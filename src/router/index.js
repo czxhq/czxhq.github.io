@@ -16,7 +16,7 @@ const routes = [
   { path: '/archive', component: Archive, meta: { title: siteConfig.archive.pageTitle } },
   { path: '/about', component: About, meta: { title: siteConfig.about.pageTitle } },
   { path: '/search', component: Search, meta: { title: siteConfig.search.pageTitle } },
-  { path: '/post/:slug', component: Post },
+  { path: '/post/:slug(.*)', component: Post },
   { path: '/:pathMatch(.*)*', component: NotFound, meta: { title: siteConfig.notFound.pageTitle } }
 ]
 

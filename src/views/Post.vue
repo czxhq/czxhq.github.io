@@ -97,12 +97,16 @@ const referencePreview = ref({
 })
 
 const visiblePosts = postsData.filter(p => !p.draft)
-const currentIndex = computed(() => visiblePosts.findIndex(p => p.slug === route.params.slug))
+const routeSlug = computed(() => {
+  const value = route.params.slug
+  return Array.isArray(value) ? value.join('/') : value
+})
+const currentIndex = computed(() => visiblePosts.findIndex(p => p.slug === routeSlug.value))
 const prevPost = computed(() => currentIndex.value > 0 ? visiblePosts[currentIndex.value - 1] : null)
 const nextPost = computed(() => (currentIndex.value >= 0 && currentIndex.value < visiblePosts.length - 1) ? visiblePosts[currentIndex.value + 1] : null)
 
 async function loadPost() {
-  const slug = route.params.slug
+  const slug = routeSlug.value
   const found = postsData.find(p => p.slug === slug)
   if (!found) {
     updateDocumentMetadata({
