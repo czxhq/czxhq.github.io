@@ -124,6 +124,17 @@ $$v_{\pi} = r_{\pi} + \gamma P_{\pi} v_{\pi}$$
 
 $$v_{\pi} = (I - \gamma P_{\pi})^{-1} r_{\pi}$$
 
+下面给出矩阵 $(I - \gamma P_\pi)^{-1}$ 的几个性质。
+
+◇ 第一，$I - \gamma P_\pi$ 是可逆的。
+%%fold {title: "证明", icon: "📂"}
+根据圆盘定理（Gershgorin circle theorem）， $I - \gamma P_\pi$ 的每个特征值都至少位于一个Gershgorin圆盘内。具体来说，第 $i$ 个Gershgorin圆盘的中心位于 $[I - \gamma P_\pi]_{ii} = 1 - \gamma p_\pi(s_i\vert{}s_i)$，半径等于 $\sum_{j \neq i}\vert{}[I - \gamma P_\pi]_{ij}\vert{} = \sum_{j \neq i}\gamma p_\pi(s_j\vert{}s_i)$。因为 $\gamma < 1$，所以其半径小于该圆中心距离原点的距离： $\sum_{j \neq i}\gamma p_\pi(s_j\vert{}s_i) < 1 - \gamma p_\pi(s_i\vert{}s_i)$。因此，所有Gershgorin圆盘都不包含原点，进而可知 $I - \gamma P_\pi$ 没有等于 $0$ 的特征值。
+%%
+
+◇ 第二，$(I - \gamma P_\pi)^{-1} \geq I$，即矩阵 $(I - \gamma P_\pi)^{-1}$ 的每个元素都是大于或等于 $0$ 的，并且进一步来说是大于或等于单位矩阵 $I$ 中的相应元素。这是因为 $P_\pi$ 的元素是非负的，考虑矩阵逆的级数展开可得 $(I - \gamma P_\pi)^{-1} = I + \gamma P_\pi + \gamma^2 P_\pi^2 + \cdots \geq I \geq 0$。
+
+◇ 第三，对于任何向量 $r \geq 0$，有 $(I - \gamma P_\pi)^{-1}r \geq r \geq 0$。这个性质可由第二个性质推论得出，因为 $[(I - \gamma P_\pi)^{-1} - I]r \geq 0$。类似的，如果 $r_1 \geq r_2$，则有 $(I - \gamma P_\pi)^{-1}r_1 \geq (I - \gamma P_\pi)^{-1}r_2$。
+
 
 
 在实际应用中，我们仍然需要使用数值工具来计算矩阵的逆。
@@ -217,7 +228,7 @@ $$v(s) = \max_{\pi} \sum_{a} \pi(a\vert{}s) \left( \sum_{r} p(r\vert{}s, a)r + \
 
 $$= \max_{\pi} \sum_{a} \pi(a\vert{}s)q(s, a)$$
 
-受上述例子启发，考虑到 $\sum_{a} \pi(a\vert{}s) = 1$，我们有
+考虑到 $\sum_{a} \pi(a\vert{}s) = 1$，我们有
 
 
 $$\max_{\pi} \sum_{a} \pi(a\vert{}s)q(s, a) = \max_{a \in \mathcal{A}(s)} q(s, a),$$
@@ -229,3 +240,295 @@ $$\pi(a\vert{}s) = \begin{cases} 1 & a = a^* \\ 0 & a \neq a^* \end{cases}$$
 
 
 其中 $a^* = \arg \max_a q(s, a)$。
+
+### 方程求解
+
+贝尔曼最优方程（BOE）为 $v = \max_{\pi} (r_{\pi} + \gamma P_{\pi} v)$。令$$f(v) := \max_{\pi} (r_{\pi} + \gamma P_{\pi} v)$$那么，贝尔曼最优方程变为$$v = f(v)$$其中$$[f(v)]_s = \max_{\pi} \sum_{a} \pi(a\vert{}s)q(s, a), \quad s \in \mathcal{S}$$
+
+#### 巴拿赫不动点定理
+
+设 $(X, d)$ 是一个非空的**完备度量空间** (Complete Metric Space)，且映射 $T: X \to X$ 是一个**压缩映射** (Contraction Mapping)。即存在常数 $q \in [0, 1)$，使得对于所有的 $x, y \in X$，都满足：
+
+
+$$d(T(x), T(y)) \leq q \cdot d(x, y)$$
+
+那么，映射 $T$ 在 $X$ 中存在**唯一**的不动点 $x^*$（即 $T(x^*) = x^*$）。
+
+---
+
+%%fold {title="证明" icon="📂"}
+
+证明分为两个主要部分：证明不动点的**唯一性**，以及证明不动点的**存在性**。
+
+#### 1. 唯一性证明
+
+假设存在两个不同的不动点 $x^*$ 和 $y^*$，即 $T(x^*) = x^*$ 且 $T(y^*) = y^*$。
+
+根据压缩映射的定义，计算它们之间的距离：
+
+
+$$d(x^*, y^*) = d(T(x^*), T(y^*)) \leq q \cdot d(x^*, y^*)$$
+
+因为 $q < 1$，上述不等式成立的唯一条件是 $d(x^*, y^*) = 0$。根据度量空间的定义，距离为 0 意味着两点重合，即：
+
+
+$$x^* = y^*$$
+
+因此，如果存在不动点，它必定是唯一的。
+
+#### 2. 存在性证明
+
+存在性的证明通过构造一个迭代序列来完成。
+
+**第一步：构造迭代序列**
+在空间 $X$ 中任取一个初始点 $x_0$，我们通过反复应用映射 $T$ 来构造一个序列 $\{x_n\}$：
+
+
+$$x_1 = T(x_0)$$
+
+$$x_2 = T(x_1) = T^2(x_0)$$
+
+$$\dots$$
+
+$$x_n = T(x_{n-1}) = T^n(x_0)$$
+
+**第二步：证明该序列是柯西列 (Cauchy Sequence)**
+首先，考察序列中任意相邻两项 $x_n$ 和 $x_{n+1}$ 之间的距离。根据压缩映射的性质：
+
+
+$$d(x_n, x_{n+1}) = d(T(x_{n-1}), T(x_n)) \leq q \cdot d(x_{n-1}, x_n)$$
+
+通过不断向前递推，可以得到每一项与初始差距的关系：
+
+
+$$d(x_n, x_{n+1}) \leq q^n \cdot d(x_0, x_1)$$
+
+现在，考虑序列中任意两项 $x_n$ 和 $x_m$（假设 $m > n$）。利用度量空间的**三角不等式**，我们可以将它们的距离展开：
+
+
+$$d(x_n, x_m) \leq d(x_n, x_{n+1}) + d(x_{n+1}, x_{n+2}) + \dots + d(x_{m-1}, x_m)$$
+
+代入上面的递推关系：
+
+
+$$d(x_n, x_m) \leq (q^n + q^{n+1} + \dots + q^{m-1}) \cdot d(x_0, x_1)$$
+
+提取公因式 $q^n$，并利用等比数列求和公式：
+
+
+$$d(x_n, x_m) \leq q^n \frac{1 - q^{m-n}}{1 - q} d(x_0, x_1) \leq \frac{q^n}{1 - q} d(x_0, x_1)$$
+
+因为 $q \in [0, 1)$，所以当 $n \to \infty$ 时，$q^n \to 0$。这意味着，对于任意给定的正数 $\epsilon > 0$，总存在一个整数 $N$，使得当 $m, n > N$ 时，都有 $d(x_n, x_m) < \epsilon$。
+这证明了序列 $\{x_n\}$ 是一个**柯西列**。
+
+**第三步：利用完备性证明极限存在且为不动点**
+定理的前提条件指出 $(X, d)$ 是**完备度量空间**。完备性的定义就是：空间中的每一个柯西列必定收敛于该空间内的某个点。
+
+因此，序列 $\{x_n\}$ 在 $X$ 中必然存在一个极限点，我们设其为 $x^*$：
+
+
+$$\lim_{n \to \infty} x_n = x^*$$
+
+最后，我们需要证明这个极限点 $x^*$ 就是映射 $T$ 的不动点。
+由于 $T$ 是压缩映射，所以它必定是一致连续的。根据连续函数的性质，极限操作可以移入函数内部：
+
+
+$$T(x^*) = T\left(\lim_{n \to \infty} x_n\right) = \lim_{n \to \infty} T(x_n) = \lim_{n \to \infty} x_{n+1} = x^*$$
+
+由此得证，$x^*$ 满足 $T(x^*) = x^*$，即 $x^*$ 是映射 $T$ 的不动点。证明完毕。
+%%
+
+$f(v)$是一个压缩映射
+
+%%fold {title: "证明", icon: "📂"}
+要证明图中的贝尔曼最优算子 $f$ 是一个压缩映射，需要在**无穷范数**（Infinity Norm，也称最大值范数）下进行。无穷范数的定义为向量中绝对值最大的元素：$\Vert{}v\Vert{}_\infty = \max_s \vert{}v(s)\vert{}$。
+
+以下是严谨的证明过程：
+
+### 1. 展开算子定义
+
+对于任意给定的状态 $s$，算子 $f$ 作用于价值函数 $v$ 的逐元素（Element-wise）形式定义为：
+
+
+$$[f(v)]_s = \max_a \left( r(s,a) + \gamma \sum_{s'} p(s'\vert{}s,a)v(s') \right)$$
+
+### 2. 设定两个任意价值函数并作差
+
+设 $v_1$ 和 $v_2$ 是两个任意的价值函数。对于特定的状态 $s$，不失一般性，我们假设 $[f(v_1)]_s \geq [f(v_2)]_s$。
+
+令 $a^*$ 为在状态 $s$ 下使得 $f(v_1)$ 取得最大值的最优动作：
+
+
+$$[f(v_1)]_s = r(s, a^*) + \gamma \sum_{s'} p(s'\vert{}s, a^*) v_1(s')$$
+
+对于价值函数 $v_2$，如果在状态 $s$ 下强行采取相同的动作 $a^*$，其期望回报必然小于或等于在所有可选动作中取最大值的结果（即它自己的最优动作）：
+
+
+$$[f(v_2)]_s \geq r(s, a^*) + \gamma \sum_{s'} p(s'\vert{}s, a^*) v_2(s')$$
+
+### 3. 放缩与引入无穷范数
+
+将上述两式相减，我们可以得到：
+
+
+$$\begin{aligned} 0 \leq [f(v_1)]_s - [f(v_2)]_s &\leq \left( r(s, a^*) + \gamma \sum_{s'} p(s'\vert{}s, a^*) v_1(s') \right) - \left( r(s, a^*) + \gamma \sum_{s'} p(s'\vert{}s, a^*) v_2(s') \right) \\ &= \gamma \sum_{s'} p(s'\vert{}s, a^*) (v_1(s') - v_2(s')) \end{aligned}$$
+
+由于对于任意下一个状态 $s'$，两者的差值都不会超过它们在全局的最大差值，即 $v_1(s') - v_2(s') \leq \Vert{}v_1 - v_2\Vert{}_\infty$。将其代入不等式进行放缩：
+
+
+$$\begin{aligned} [f(v_1)]_s - [f(v_2)]_s &\leq \gamma \sum_{s'} p(s'\vert{}s, a^*) \Vert{}v_1 - v_2\Vert{}_\infty \\ &= \gamma \Vert{}v_1 - v_2\Vert{}_\infty \sum_{s'} p(s'\vert{}s, a^*) \end{aligned}$$
+
+### 4. 利用概率分布的性质简化
+
+根据马尔可夫决策过程（MDP）的定义，状态转移概率在所有可能的下一个状态 $s'$ 上的总和为 1，即 $\sum_{s'} p(s'\vert{}s, a^*) = 1$。因此，上式可简化为：
+
+
+$$[f(v_1)]_s - [f(v_2)]_s \leq \gamma \Vert{}v_1 - v_2\Vert{}_\infty$$
+
+同理，如果我们一开始假设的是 $[f(v_2)]_s > [f(v_1)]_s$，通过完全对称的推导也能得出 $[f(v_2)]_s - [f(v_1)]_s \leq \gamma \Vert{}v_1 - v_2\Vert{}_\infty$。综合这两种情况，可以得到绝对值不等式：
+
+
+$$\vert{}[f(v_1)]_s - [f(v_2)]_s\vert{} \leq \gamma \Vert{}v_1 - v_2\Vert{}_\infty$$
+
+### 5. 推广到全局状态空间
+
+上述绝对值不等式对状态空间 $\mathcal{S}$ 中的**任意**状态 $s$ 都成立，那么它对所有状态差值中的最大值也必然成立：
+
+
+$$\max_s \vert{}[f(v_1)]_s - [f(v_2)]_s\vert{} \leq \gamma \Vert{}v_1 - v_2\Vert{}_\infty$$
+
+根据无穷范数的定义，等式左侧正是 $\Vert{}f(v_1) - f(v_2)\Vert{}_\infty$，因此：
+
+
+$$\Vert{}f(v_1) - f(v_2)\Vert{}_\infty \leq \gamma \Vert{}v_1 - v_2\Vert{}_\infty$$
+
+因为在强化学习问题中，折扣因子 $\gamma$ 通常满足 $0 \le \gamma < 1$，上述不等式完美符合压缩映射的定义。这也就证明了贝尔曼最优算子 $f$ 是一个以 $\gamma$ 为压缩系数的压缩映射。
+%%
+
+贝尔曼最优方程 $v = f(v) = \max_{\pi \in \Pi}(r_\pi + \gamma P_\pi v)$
+
+始终存在唯一解 $v^*$，该解可以通过如下迭代算法求解：
+
+$$v_{k+1} = f(v_k) = \max_{\pi \in \Pi}(r_\pi + \gamma P_\pi v_k), \quad k = 0, 1, 2, \dots$$
+
+对任意给定的 $v_0$，当 $k \to \infty$ 时，$v_k$ 以指数速度收敛至 $v^*$。
+
+
+### 解的最优性
+
+如果 $v^*$ 和 $\pi^*$ 是贝尔曼最优方程的解，那么 $v^*$ 是最优状态值，而 $\pi^*$ 是最优策略，即对于任意策略 $\pi$ 都有
+
+$$v^* = v_{\pi^*} \ge v_\pi,$$
+
+其中 $v_\pi$ 是策略 $\pi$ 的状态值，“$\ge$” 是逐元素比较。
+%%fold {title: "证明", icon: "📂"}
+假设 $\pi$ 是任意一个策略，其贝尔曼方程为
+
+$$v_\pi = r_\pi + \gamma P_\pi v_\pi.$$
+
+由于
+
+$$v^* = \max_\pi(r_\pi + \gamma P_\pi v^*) = r_{\pi^*} + \gamma P_{\pi^*} v^* \ge r_\pi + \gamma P_\pi v^*,$$
+
+因此有
+
+$$v^* - v_\pi \ge (r_\pi + \gamma P_\pi v^*) - (r_\pi + \gamma P_\pi v_\pi)$$
+
+$$= \gamma P_\pi (v^* - v_\pi).$$
+
+反复应用上述不等式可得
+
+$$v^* - v_\pi \ge \gamma P_\pi (v^* - v_\pi) \ge \gamma^2 P_\pi^2 (v^* - v_\pi) \ge \dots \ge \gamma^n P_\pi^n (v^* - v_\pi).$$
+
+由此可以推出
+
+$$v^* - v_\pi \ge \lim_{n \to \infty} \gamma^n P_\pi^n (v^* - v_\pi) = 0.$$
+
+上式右侧等于 $0$ 是因为 $\gamma < 1$ 且 $P_\pi^n$ 所有元素都大于或等于 $0$ 且小于或等于 $1$。最后，因为 $v^* \ge v_\pi$ 对于任何策略 $\pi$ 都成立，所以 $\pi^*$ 是最优策略且 $v^*$ 是最优状态值。
+%%
+
+### 最优策略
+假设 $v^*$ 是贝尔曼最优方程的最优状态值解，那么下面的确定性贪婪策略是一个最优策略：
+
+$$\pi^*(a\vert{}s) = \begin{cases} 1, & a = a^*(s), \\ 0, & a \neq a^*(s), \end{cases} \quad s \in \mathcal{S}, \tag{3.7}$$
+
+其中
+
+$$a^*(s) = \arg \max_a q^*(a, s),$$
+
+且
+
+$$q^*(s, a) \doteq \sum_{r \in \mathcal{R}} p(r\vert{}s, a)r + \gamma \sum_{s' \in \mathcal{S}} p(s'\vert{}s, a)v^*(s').$$
+
+%%fold {title: "证明", icon: "📂"}
+最优策略的矩阵-向量形式是 $\pi^* = \arg\max_\pi (r_\pi + \gamma P_\pi v^*)$，其按元素展开的形式为
+
+$$\pi^*(s) = \arg\max_{\pi \in \Pi} \sum_{a \in \mathcal{A}} \pi(a\vert{}s) \left( \sum_{r \in \mathcal{R}} p(r\vert{}s, a)r + \gamma \sum_{s' \in \mathcal{S}} p(s'\vert{}s, a)v^*(s') \right), \quad s \in \mathcal{S}$$
+
+为了最大化 $\sum_{a \in \mathcal{A}} \pi(a\vert{}s)q^*(s, a)$，策略 $\pi(s)$ 应该选择对应最大 $q^*(s, a)$ 的动作，这
+
+是因为
+
+$$\sum_{a \in \mathcal{A}} \pi(a\vert{}s)q^*(s, a) \leqslant \sum_{a \in \mathcal{A}} \pi(a\vert{}s) \max_{a \in \mathcal{A}} q^*(s, a) = \max_{a \in \mathcal{A}} q^*(s, a).$$
+%%
+
+==最优策略不唯一，也有可能随机。但总存在一个确定性最优策略==
+
+### 影响最优策略的因素
+
+#### 折扣因子
+
+小则短视
+避免无意义的绕路
+
+#### 奖励值
+
+**最优策略的不变性**：考虑一个马尔可夫决策过程，假设 $v^* \in \mathbb{R}^{\vert{}\mathcal{S}\vert{}}$ 为最优状
+
+态值，即满足 $v^* = \max_{\pi \in \Pi} (r_\pi + \gamma P_\pi v^*)$。如果每个奖励 $r$ 都通过仿射变换变成 $\alpha r + \beta$，
+
+其中 $\alpha, \beta \in \mathbb{R}$ 且 $\alpha > 0$，那么相应的最优状态值 $v'$ 也是 $v^*$ 的一个仿射变换：
+
+$$v' = \alpha v^* + \frac{\beta}{1 - \gamma}\mathbf{1}, \tag{3.8}$$
+
+这里 $\gamma \in (0, 1)$ 是折扣因子；$\mathbf{1} = [1, \dots, 1]^\text{T}$。$v'$ 对应的最优策略与 $v^*$ 对应的最优策
+
+略相同。
+
+==定理告诉我们：真正决定最优策略的不是奖励的绝对值，而是奖励的相对值。==
+
+%%fold {title: "证明", icon: "📂"}
+对于任意策略 $\pi$，定义 $r_\pi = [\dots, r_\pi(s), \dots]^\text{T}$，其中
+
+$$r_\pi(s) = \sum_{a \in \mathcal{A}} \pi(a\vert{}s) \sum_{r \in \mathcal{R}} p(r\vert{}s, a)r, \quad s \in \mathcal{S}.$$
+
+如果 $r \to \alpha r + \beta$，则 $r_\pi(s) \to \alpha r_\pi(s) + \beta$，因此 $r_\pi \to \alpha r_\pi + \beta\mathbf{1}$，这里 $\mathbf{1} = [1, \dots, 1]^\text{T}$。
+
+此时贝尔曼最优方程变为
+
+$$v' = \max_{\pi \in \Pi} (\alpha r_\pi + \beta\mathbf{1} + \gamma P_\pi v'). \tag{3.9}$$
+
+下面证明式 (3.9) 的解是 $v' = \alpha v^* + c\mathbf{1}$，其中 $c = \beta / (1 - \gamma)$。
+
+具体来说，把 $v' = \alpha v^* + c\mathbf{1}$ 代入式 (3.9) 可得
+
+$$\alpha v^* + c\mathbf{1} = \max_{\pi \in \Pi} (\alpha r_\pi + \beta\mathbf{1} + \gamma P_\pi (\alpha v^* + c\mathbf{1})) = \max_{\pi \in \Pi} (\alpha r_\pi + \beta\mathbf{1} + \alpha\gamma P_\pi v^* + c\gamma\mathbf{1}).$$
+
+上式中第二个等号是因为 $P_\pi\mathbf{1} = \mathbf{1}$。上述方程可以重组为
+
+$$\alpha v^* = \max_{\pi \in \Pi} (\alpha r_\pi + \alpha\gamma P_\pi v^*) + \beta\mathbf{1} + c\gamma\mathbf{1} - c\mathbf{1}.$$
+
+由于 $v^* = \max_{\pi \in \Pi} (r_\pi + \gamma P_\pi v^*)$，上式等价于
+
+$$\beta\mathbf{1} + c\gamma\mathbf{1} - c\mathbf{1} = 0.$$
+
+由于 $c = \beta / (1 - \gamma)$，上述方程是成立的。因此，$v' = \alpha v^* + c\mathbf{1}$ 是式 (3.9) 的解。由
+
+于式 (3.9) 是贝尔曼最优方程，因此 $v'$ 也是其唯一解。
+
+最后，由于 $v'$ 是 $v^*$ 的仿射变换，动作价值之间的相对关系保持不变，因
+
+此从 $v'$ 导出的贪婪最优策略与从 $v^*$ 导出的相同，即 $\arg\max_{\pi \in \Pi} (r_\pi + \gamma P_\pi v')$ 与
+
+$\arg\max_{\pi \in \Pi} (r_\pi + \gamma P_\pi v^*)$ 相同。
+%%
