@@ -1,0 +1,338 @@
+---
+title: "强化学习第三篇"
+slug: "rl/p3"
+date: "2026-07-27"
+updated: "2026-07-27"
+category: "人工智能/强化学习"
+tags:
+  - "AI"
+  - "Tutorial"
+summary: "强化学习第三篇."
+cover: ""
+draft: false
+featured: true
+format: "kmd"
+---
+
+# 强化学习第三篇
+
+## 值迭代
+
+%%note {title: "算法 1：值迭代算法", icon: "📝"}
+
+初始化：已知模型，即任意 $(s, a)$ 对应的 $p(r\vert{}s, a)$ 和 $p(s'\vert{}s, a)$。初始值 $v_0$。
+目标：求解最优状态值和最优策略。
+
+当 $v_k$ 尚未收敛时（例如 $\Vert{}v_k - v_{k-1}\Vert{}$ 大于给定阈值时），进行如下迭代
+对每个状态 $s \in \mathcal{S}$
+对每个动作 $a \in \mathcal{A}(s)$
+计算 $q$ 值：$q_k(s, a) = \sum_r p(r\vert{}s, a)r + \gamma \sum_{s'} p(s'\vert{}s, a)v_k(s')$
+最大价值动作：$a_k^*(s) = \arg\max_a q_k(s, a)$
+策略更新：$\pi_{k+1}(a\vert{}s) = 1$ 如果 $a = a_k^*$；否则 $\pi_{k+1}(a\vert{}s) = 0$
+值更新：$v_{k+1}(s) = \max_a q_k(s, a)$
+%%
+
+## 策略迭代
+
+%%note {title: "算法 2：策略迭代算法", icon: "📝"}
+
+
+初始化：已知模型，即任意 $(s, a)$ 对应的 $p(r\vert{}s, a)$ 和 $p(s'\vert{}s, a)$，初始策略 $\pi_0$。
+目标：寻找最优状态值和最优策略。
+
+当 $v_{\pi_k}$ 未收敛时，进行第 $k$ 次迭代
+策略评价：
+选择初始值 $v_{\pi_k}^{(0)}$
+当 $v_{\pi_k}^{(j)}$ 未收敛时，进行第 $j$ 次迭代
+对每一个状态 $s \in \mathcal{S}$
+$v_{\pi_k}^{(j+1)}(s) = \sum_a \pi_k(a\vert{}s) \left[ \sum_r p(r\vert{}s, a)r + \gamma \sum_{s'} p(s'\vert{}s, a)v_{\pi_k}^{(j)}(s') \right]$
+策略改进：
+对每一个状态 $s \in \mathcal{S}$
+对每一个动作 $a \in \mathcal{A}$
+$q_{\pi_k}(s, a) = \sum_r p(r\vert{}s, a)r + \gamma \sum_{s'} p(s'\vert{}s, a)v_{\pi_k}(s')$
+$a_k^*(s) = \arg\max_a q_{\pi_k}(s, a)$
+$\pi_{k+1}(a\vert{}s) = 1$ 如果 $a = a_k^*$；否则 $\pi_{k+1}(a\vert{}s) = 0$
+%%
+
+### 策略改进
+
+%%lemma {id="lemma-id" title="引理 1（策略改进）"}
+如果 $\pi_{k+1} = \arg\max_\pi (r_\pi + \gamma P_\pi v_{\pi_k})$，那么 $v_{\pi_{k+1}} \geqslant v_{\pi_k}$。
+%%fold {title: "证明", icon: "📂"}
+
+由于 $v_{\pi_{k+1}}$ 和 $v_{\pi_k}$ 都是状态值，它们分别满足下面的贝尔曼方程：
+
+$$v_{\pi_{k+1}} = r_{\pi_{k+1}} + \gamma P_{\pi_{k+1}} v_{\pi_{k+1}},$$
+
+$$v_{\pi_k} = r_{\pi_k} + \gamma P_{\pi_k} v_{\pi_k}.$$
+
+由于 $\pi_{k+1} = \arg\max_\pi (r_\pi + \gamma P_\pi v_{\pi_k})$，因此
+
+$$r_{\pi_{k+1}} + \gamma P_{\pi_{k+1}} v_{\pi_k} \geqslant r_{\pi_k} + \gamma P_{\pi_k} v_{\pi_k}.$$
+
+因此
+
+$$\begin{aligned} v_{\pi_k} - v_{\pi_{k+1}} &= (r_{\pi_k} + \gamma P_{\pi_k} v_{\pi_k}) - (r_{\pi_{k+1}} + \gamma P_{\pi_{k+1}} v_{\pi_{k+1}}) \\ &\leqslant (r_{\pi_{k+1}} + \gamma P_{\pi_{k+1}} v_{\pi_k}) - (r_{\pi_{k+1}} + \gamma P_{\pi_{k+1}} v_{\pi_{k+1}}) \\ &\leqslant \gamma P_{\pi_{k+1}} (v_{\pi_k} - v_{\pi_{k+1}}). \end{aligned}$$
+
+反复调用上式可得
+
+$$\begin{aligned} v_{\pi_k} - v_{\pi_{k+1}} \leqslant \gamma^2 P_{\pi_{k+1}}^2 (v_{\pi_k} - v_{\pi_{k+1}}) &\leqslant \dots \leqslant \gamma^n P_{\pi_{k+1}}^n (v_{\pi_k} - v_{\pi_{k+1}}) \\ &\leqslant \lim_{n \to \infty} \gamma^n P_{\pi_{k+1}}^n (v_{\pi_k} - v_{\pi_{k+1}}) = 0. \end{aligned}$$
+
+上式最右端极限等于 $0$ 是因为 $\gamma^n \to 0$ 且 $P_{\pi_{k+1}}^n$ 的每一个元素都在 $[0, 1]$ 区间。因此，
+$v_{\pi_k} - v_{\pi_{k+1}} \leqslant 0$ 说明了 $\pi_{k+1}$ 比 $\pi_k$ 更优。
+%%
+%%
+
+### 收敛性
+
+%%theorem {id="theorem-id" title="定理 1 策略迭代的收敛性"}
+由策略迭代算法生成的状态值序列 $\{v_{\pi_k}\}_{k=0}^\infty$ 收敛于最优状态值 $v^*$。因此，策略序列 $\{\pi_k\}_{k=0}^\infty$ 收敛于一个最优策略。
+%%fold {title: "证明", icon: "📂"}
+
+为了证明 $\{v_{\pi_k}\}_{k=0}^\infty$ 的收敛性，我们引入另一个序列 $\{v_k\}_{k=0}^\infty$，该序列由下面
+
+的迭代算法产生：
+
+$$v_{k+1} = f(v_k) = \max_\pi (r_\pi + \gamma P_\pi v_k).$$
+
+这个迭代算法实际上就是值迭代算法。我们已经知道，给定任意的初始值 $v_0$，$v_k$
+
+会收敛到 $v^*$。
+
+对任意的 $\pi_0$，总是能找到 $v_0$ 使得 $v_0 \leqslant v_{\pi_0}$。下面用归纳法证明 $v_k \leqslant v_{\pi_k} \leqslant v^*$
+
+对任意 $k \geqslant 1$ 都成立。
+
+假设 $v_{\pi_k} \geqslant v_k$ 对某一个 $k$ 成立，那么对于 $k+1$ 可得
+
+$$\begin{aligned} v_{\pi_{k+1}} - v_{k+1} &= (r_{\pi_{k+1}} + \gamma P_{\pi_{k+1}} v_{\pi_{k+1}}) - \max_\pi (r_\pi + \gamma P_\pi v_k) \\ &\geqslant (r_{\pi_{k+1}} + \gamma P_{\pi_{k+1}} v_{\pi_k}) - \max_\pi (r_\pi + \gamma P_\pi v_k) \\ &\qquad \quad (\text{因为 } v_{\pi_{k+1}} \geqslant v_k \text{ 并且 } P_{\pi_{k+1}} \geqslant 0) \\ &= (r_{\pi_{k+1}} + \gamma P_{\pi_{k+1}} v_{\pi_k}) - (r_{\pi_k'} + \gamma P_{\pi_k'} v_k) \\ &\qquad \quad (\text{令 } \pi_k' = \arg\max_\pi (r_\pi + \gamma P_\pi v_k)) \\ &\geqslant (r_{\pi_k'} + \gamma P_{\pi_k'} v_{\pi_k}) - (r_{\pi_k'} + \gamma P_{\pi_k'} v_k) \\ &\qquad \quad (\text{因为 } \pi_{k+1} = \arg\max_\pi (r_\pi + \gamma P_\pi v_{\pi_k})) \\ &= \gamma P_{\pi_k'} (v_{\pi_k} - v_k). \end{aligned}$$
+
+由于 $v_{\pi_k} - v_k \geqslant 0$ 并且 $P_{\pi_k'}$ 非负，我们有 $P_{\pi_k'} (v_{\pi_k} - v_k) \geqslant 0$，因此 $v_{\pi_{k+1}} - v_{k+1} \geqslant 0$。
+
+由于 $v_{\pi_k} \geqslant v_k$ 对于 $k = 0$ 成立，那么通过递归可知 $v_{\pi_k} \geqslant v_k$ 对任意 $k \geqslant 0$ 成
+
+立。最后，因为 $v_k$ 能收敛到 $v^*$，所以 $v_{\pi_k}$ 也必定能收敛到 $v^*$。
+%%
+%%
+
+## 截断策略迭代算法
+
+%%note {title: "算法 3：截断策略迭代算法", icon: "📝"}
+
+
+初始化：已知模型，即任意 $(s, a)$ 对应的 $p(r\vert{}s, a)$ 和 $p(s'\vert{}s, a)$。初始策略 $\pi_0$。
+目标：寻找最优状态值和最优策略。
+
+当 $v_k$ 未收敛时，进行第 $k$ 次迭代
+策略评价：
+选择初始值为 $v_k^{(0)} = v_{k-1}$。设置最大迭代次数为 $j_\text{truncate}$。
+当 $j < j_\text{truncate}$ 时
+对每一个状态 $s \in \mathcal{S}$
+$v_k^{(j+1)}(s) = \sum_a \pi_k(a\vert{}s) \left[ \sum_r p(r\vert{}s, a)r + \gamma \sum_{s'} p(s'\vert{}s, a)v_k^{(j)}(s') \right]$
+令 $v_k = v_k^{(j_\text{truncate})}$
+策略改进：
+对每一个状态 $s \in \mathcal{S}$
+对每一个动作 $a \in \mathcal{A}(s)$
+$q_k(s, a) = \sum_r p(r\vert{}s, a)r + \gamma \sum_{s'} p(s'\vert{}s, a)v_k(s')$
+$a_k^*(s) = \arg\max_a q_k(s, a)$
+$\pi_{k+1}(a\vert{}s) = 1$ 如果 $a = a_k^*$；否则 $\pi_{k+1}(a\vert{}s) = 0$
+%%
+
+### 收敛性分析
+%%theorem {id="theorem-id1" title="定理 2"}
+在截断策略迭代算法中，嵌套在其策略评价步骤中的迭代算法为
+
+$$v_{\pi_k}^{(j+1)} = r_{\pi_k} + \gamma P_{\pi_k} v_{\pi_k}^{(j)}, \quad j = 0, 1, 2, \dots$$
+
+如果初始值选为 $v_{\pi_k}^{(0)} = v_{\pi_{k-1}}$，则对于 $j = 0, 1, 2, \dots$ 有
+
+$$v_{\pi_k}^{(j+1)} \geqslant v_{\pi_k}^{(j)}.$$
+
+%%fold {title: "证明", icon: "📂"}
+
+第一，因为 $v_{\pi_k}^{(j)} = r_{\pi_k} + \gamma P_{\pi_k} v_{\pi_k}^{(j-1)}$ 且 $v_{\pi_k}^{(j+1)} = r_{\pi_k} + \gamma P_{\pi_k} v_{\pi_k}^{(j)}$，所以有
+
+$$v_{\pi_k}^{(j+1)} - v_{\pi_k}^{(j)} = \gamma P_{\pi_k} (v_{\pi_k}^{(j)} - v_{\pi_k}^{(j-1)}) = \dots = \gamma^j P_{\pi_k}^j (v_{\pi_k}^{(1)} - v_{\pi_k}^{(0)}). \tag{4.5}$$
+
+第二，因为 $v_{\pi_k}^{(0)} = v_{\pi_{k-1}}$，所以有
+
+$$v_{\pi_k}^{(1)} = r_{\pi_k} + \gamma P_{\pi_k} v_{\pi_k}^{(0)} = r_{\pi_k} + \gamma P_{\pi_k} v_{\pi_{k-1}} \geqslant r_{\pi_{k-1}} + \gamma P_{\pi_{k-1}} v_{\pi_{k-1}} = v_{\pi_{k-1}} = v_{\pi_k}^{(0)},$$
+
+其中的不等号是因为 $\pi_k = \arg\max_\pi (r_\pi + \gamma P_\pi v_{\pi_{k-1}})$。将 $v_{\pi_k}^{(1)} \geqslant v_{\pi_k}^{(0)}$ 代入 (4.5) 可得
+$v_{\pi_k}^{(j+1)} \geqslant v_{\pi_k}^{(j)}$。
+%%
+%%
+
+#### 严格证明
+
+%%note {title: "截断策略迭代是收敛的", icon: "📝"}
+%%fold {title: "证明", icon: "📂"}
+
+
+### 1. 引入贝尔曼算子
+
+为了简化书写和证明，我们首先定义两个核心的算子（可以理解为对值函数向量的映射）：
+
+* **状态价值评价算子 $T_\pi$**：
+对于给定的策略 $\pi$ 和任意价值向量 $v$，定义 $T_\pi v = r_\pi + \gamma P_\pi v$。
+* **贝尔曼最优算子 $T^*$**：
+对于任意价值向量 $v$，定义 $T^* v = \max_\pi (r_\pi + \gamma P_\pi v)$。
+
+### 2. 算子的两个核心数学性质
+
+证明收敛性的基石是这两个算子具备的两个完美性质：
+
+* **单调性（Monotonicity）**：如果 $u \geqslant v$（逐元素大于等于），那么 $T_\pi u \geqslant T_\pi v$ 且 $T^* u \geqslant T^* v$。
+* **压缩映射（Contraction Mapping）**：在最大范数（无穷范数）$\vert{}\vert{}\cdot\vert{}\vert{}_\infty$ 下，它们都是压缩系数为 $\gamma$ 的压缩映射。即 $\vert{}\vert{}T_\pi u - T_\pi v\vert{}\vert{}_\infty \leqslant \gamma \vert{}\vert{}u - v\vert{}\vert{}_\infty$，对 $T^*$ 同理。根据**巴拿赫不动点定理（Banach Fixed-Point Theorem）**，这意味着连续应用这些算子，一定会收敛到唯一的不动点（即真实值 $v_\pi$ 和最优值 $v^*$）。
+
+### 3. 用算子重写截断策略迭代
+
+截断策略迭代的过程可以被极其优雅地用算子表示出来。
+假设策略评价截断的次数为 $m$（即你图中的 $j_{\text{truncate}}$），那么第 $k$ 次迭代的过程等价于：
+
+1. **策略改进**：贪婪地选择策略 $\pi_k$，使得 $T_{\pi_k} v_{k-1} = T^* v_{k-1}$。
+2. **策略评价（截断）**：将算子 $T_{\pi_k}$ 在初始值 $v_{k-1}$ 上连续作用 $m$ 次，得到 $v_k$。
+数学表达为：$v_k = (T_{\pi_k})^m v_{k-1}$。
+
+### 4. 解决“近似值误差”的证明收敛逻辑
+
+**第一步：证明单调上升（或误差缩小）**
+由于 $\pi_k$ 是针对 $v_{k-1}$ 的贪婪策略，根据定义有：
+
+
+$$T_{\pi_k} v_{k-1} = T^* v_{k-1} \geqslant v_{k-1}$$
+
+
+利用算子的单调性，对上式两边不断施加 $T_{\pi_k}$：
+
+
+$$(T_{\pi_k})^2 v_{k-1} \geqslant T_{\pi_k} v_{k-1} \geqslant v_{k-1}$$
+
+
+连续施加 $m$ 次后：
+
+
+$$v_k = (T_{\pi_k})^m v_{k-1} \geqslant v_{k-1}$$
+
+
+这就严格证明了，**即便我们用的是带有误差的近似值 $v_{k-1}$，只要 $m \geqslant 1$，价值序列 $\{v_k\}$ 就是单调非减的**。
+
+**第二步：利用压缩性质证明收敛到最优**
+我们计算当前值 $v_k$ 与最优真实值 $v^*$ 之间的距离（使用无穷范数）：
+
+
+$$\vert{}\vert{}v_k - v^*\vert{}\vert{}_\infty = \vert{}\vert{}(T_{\pi_k})^m v_{k-1} - v^*\vert{}\vert{}_\infty$$
+
+我们需要证明：
+
+
+$$\vert{}\vert{}v_k - v^*\vert{}\vert{}_\infty \leqslant \gamma \vert{}\vert{}v_{k-1} - v^*\vert{}\vert{}_\infty$$
+
+为了推导清晰，我们记上一轮的误差为 $\epsilon = \vert{}\vert{}v_{k-1} - v^*\vert{}\vert{}_\infty$，并引入全 1 向量 $\mathbf{e} = [1, 1, \dots, 1]^T$。
+根据无穷范数的定义，我们有：
+
+
+$$v^* - \epsilon \mathbf{e} \leqslant v_{k-1} \leqslant v^* + \epsilon \mathbf{e}$$
+
+完整的证明需要从**上界**和**下界**两个方向进行“夹逼”。
+
+---
+
+### 第一步：证明上界（Upper Bound）
+
+我们要证明 $v_k - v^* \leqslant \gamma \epsilon \mathbf{e}$。这一步对任意初始化的 $v_0$ 都成立。
+
+1. **利用最优算子放缩**：
+对 $v_{k-1} \leqslant v^* + \epsilon \mathbf{e}$ 两边施加贝尔曼最优算子 $T^*$。由于 $T^*$ 具有单调性，且 $T^* v^* = v^*$：
+
+$$T^* v_{k-1} \leqslant T^*(v^* + \epsilon \mathbf{e}) = T^*v^* + \gamma \epsilon \mathbf{e} = v^* + \gamma \epsilon \mathbf{e}$$
+
+
+2. **代入贪婪策略**：
+因为 $\pi_k$ 是针对 $v_{k-1}$ 的贪婪策略，根据定义必然有 $T_{\pi_k} v_{k-1} = T^* v_{k-1}$。代入上式得到：
+
+$$T_{\pi_k} v_{k-1} \leqslant v^* + \gamma \epsilon \mathbf{e}$$
+
+
+3. **连续施加截断算子**：
+我们继续对两边施加本轮的评价算子 $T_{\pi_k}$。需要注意的是，对于任意策略，其算子作用于最优价值时，必然不会超过最优价值，即 $T_{\pi_k} v^* \leqslant T^* v^* = v^*$。
+
+$$\begin{aligned}    T_{\pi_k}^2 v_{k-1} &\leqslant T_{\pi_k}(v^* + \gamma \epsilon \mathbf{e}) \\    &= T_{\pi_k}v^* + \gamma^2 \epsilon \mathbf{e} \\    &\leqslant v^* + \gamma^2 \epsilon \mathbf{e}    \end{aligned}$$
+
+
+
+以此类推，连续施加 $m$ 次（即截断评价步骤）：
+
+$$v_k = T_{\pi_k}^m v_{k-1} \leqslant v^* + \gamma^m \epsilon \mathbf{e}$$
+
+
+4. **得出上界结论**：
+因为折扣因子 $\gamma \in [0, 1)$ 且截断次数 $m \geqslant 1$，所以 $\gamma^m \leqslant \gamma$。
+
+$$v_k - v^* \leqslant \gamma \epsilon \mathbf{e}$$
+
+
+
+---
+
+### 第二步：证明下界（Lower Bound）—— 教材中的“隐藏技巧”
+
+我们要证明 $v_k - v^* \geqslant -\gamma \epsilon \mathbf{e}$。
+为了解决这个问题，标准动态规划教材（如 Puterman 的著作）通常会引入一个非常优雅的技巧：**单调初始化（Monotonic Initialization）**。
+
+假设我们在算法最开始，给 $v_0$ 赋予一个足够小的值，使得它满足 $T^* v_0 \geqslant v_0$。我们可以证明，在这个前提下，整个价值序列 $\{v_k\}$ 是**严格单调递增**的。
+
+1. **单调性的归纳传递**：
+假设在第 $k-1$ 步时满足 $T^* v_{k-1} \geqslant v_{k-1}$。
+因为 $\pi_k$ 是贪婪策略，所以 $T_{\pi_k} v_{k-1} = T^* v_{k-1} \geqslant v_{k-1}$。
+利用 $T_{\pi_k}$ 的单调性，不断作用于该不等式：
+
+$$T_{\pi_k}^m v_{k-1} \geqslant T_{\pi_k}^{m-1} v_{k-1} \geqslant \dots \geqslant T_{\pi_k} v_{k-1}$$
+
+
+
+这就意味着本轮截断结束后的值 $v_k$，必然大于等于本轮刚做完贪婪改进时的值：
+
+$$v_k \geqslant T_{\pi_k} v_{k-1} = T^* v_{k-1}$$
+
+
+2. **利用单调性轻松得出下界**：
+既然 $v_k \geqslant T^* v_{k-1}$，我们在不等式两边同时减去 $v^*$：
+
+$$v_k - v^* \geqslant T^* v_{k-1} - T^* v^*$$
+
+
+
+我们已经知道最优算子 $T^*$ 是压缩映射，且 $v_{k-1} \geqslant v^* - \epsilon \mathbf{e}$，因此：
+
+$$T^* v_{k-1} - T^* v^* \geqslant -\gamma \vert{}\vert{}v_{k-1} - v^*\vert{}\vert{}_\infty \mathbf{e} = -\gamma \epsilon \mathbf{e}$$
+
+
+
+代入上式，直接得出下界：
+
+$$v_k - v^* \geqslant -\gamma \epsilon \mathbf{e}$$
+
+
+---
+
+### 第三步：合并结论
+
+综合第一步和第二步的结论，我们得到了完美的夹逼：
+
+
+$$-\gamma \epsilon \mathbf{e} \leqslant v_k - v^* \leqslant \gamma \epsilon \mathbf{e}$$
+
+根据无穷范数的定义，向量中最大的绝对值偏差被严格限制在 $\gamma \epsilon$ 以内，即：
+
+
+$$\vert{}\vert{}v_k - v^*\vert{}\vert{}_\infty \leqslant \gamma \vert{}\vert{}v_{k-1} - v^*\vert{}\vert{}_\infty$$
+
+---
+
+### 总结
+
+由于每次迭代后，$v_k$ 与 $v^*$ 之间的距离都会严格缩小（缩小比例小于 1），当 $k \to \infty$ 时，误差必然趋近于 0，即 $\lim_{k \to \infty} v_k = v^*$。
+
+%%
+%%
